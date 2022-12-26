@@ -5,4 +5,3 @@
 *.pyc
 /*.egg-info
 /build
-logging.ini

@@ -1,6 +1,6 @@
 import logging
 import typing
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from yxsim.resources import Resource
 
@@ -11,22 +11,27 @@ logger = logging.getLogger()
 class Action:
     source: 'Player'
     target: 'Player' = None
-    executed = False
+    executed: bool = field(default=False, init=False)
+    success: bool = field(default=False, init=False)
 
+    # Input Values
     damage: int = 0
     healing: int = 0
-    effective_healing: int = 0
-    increase_max_hp: int = 0
-    decrease_max_hp: int = 0
+    max_hp_change: int = 0
     resource_changes: dict = None
 
     # Action Nesting
     related_actions: typing.List['Action'] = None
     cloud_hit_action: 'Action' = None
+    injured_action: 'Action' = None
 
-    def execute(self):
+    # Measured Results
+    damage_to_health: int = field(default=0, init=False)
+    effective_healing: int = field(default=0, init=False)
+
+    def execute(self) -> 'bool':
         if self.executed:
-            return
+            raise
         self.executed = True
         logger.debug(self)
 
@@ -42,6 +47,11 @@ class Action:
             else:
                 self.source.resources
 
+        return self.executed and self.success
+
+    @property
+    def injured(self) -> bool:
+        return self.damage_to_health > 0
 
 
 

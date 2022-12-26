@@ -5,6 +5,7 @@ class Resource(Enum):
     QI = 1
     DEF = 2
     SWORD_INTENT = 3
+    CLOUD_HIT = 4
 
 
     IGNORE_DEFENSE = 101
