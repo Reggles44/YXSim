@@ -1,0 +1,2 @@
+class Destiny:
+    id = ''
