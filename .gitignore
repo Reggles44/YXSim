@@ -1,0 +1,8 @@
+/.idea/
+/venv/
+.pytest_cache
+/.coverage
+*.pyc
+/*.egg-info
+/build
+logging.ini
