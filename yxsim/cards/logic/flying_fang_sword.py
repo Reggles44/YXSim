@@ -1,13 +1,16 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
-from yxsim.resources import Resource
+from yxsim.resources import Resource, Sect
 
 
 class CardType(Card):
-    display_name = 'Sword Defense'
+    display_name = 'Flying Fang Sword'
+    phase = 1
+    sect = Sect.CLOUD
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
+            qi = 1,
             card_id=self.id, source=attacker,
             target=defender,
             damage=8,

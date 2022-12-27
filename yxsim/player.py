@@ -39,6 +39,7 @@ class Player(EventManager):
         self.cards = [card_registry[cards[i] if i < len(cards) else ''] for i in range(slots)]
         self.star_slots = star_slots or []
         self.card_counter = 0
+        self.unrestrained_sword_counter = 0
 
     def play_next_card(self, **kwargs):
         if self.card_counter in self.star_slots:
