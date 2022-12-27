@@ -1,28 +1,30 @@
 import logging
+import pkgutil
 
-from yxsim.cards.logic.normal_attack import CardType as NormalAttack
 
-logger = logging.getLogger(__name__)
-
-logic_path = __path__
+logger = logging.getLogger()
 
 
 class Registry(dict):
-    cls_name = 'CardType'
-
     def __getitem__(self, item):
         if item and item not in self:
-            character = __import__(item, globals(), locals(), [self.cls_name], 1)
-            self.register(item, getattr(character, self.cls_name))
+            self.register(item)
 
-        return self.get(item, NormalAttack)()
+        return self.get(item, self.get('normal_attack'))()
 
-    def register(self, name, character):
-        assert name not in self, name
-        self[name] = character
-        logger.debug(f'Registered {name} - {character}')
+    def register(self, item):
+        if item in self:
+            logger.debug(f'{item} already registered')
+            return
+        obj = __import__(item, globals(), locals(), ['CardType'], 1).CardType
+        obj.id = item
+        self[item] = obj
+        logger.debug(f'Registered {item} - {obj}')
+
+    def autoregister(self):
+        for _, name, _ in pkgutil.iter_modules(__path__):
+            self.register(name)
 
 
 registry = Registry()
-registry.register('normal_attack', NormalAttack)
-assert registry['normal_attack']
+registry.register('normal_attack')

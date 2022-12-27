@@ -4,8 +4,22 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Light Sword'
+    display_name = 'Light Sword'
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        qi_buff = Action(source=attacker, target=attacker, resource_changes={Resource.QI: 1})
-        return Action(source=attacker, target=defender, damage=4, related_actions=[qi_buff]).execute()
+        return Action(
+            card_id=self.id,
+            source=attacker,
+            target=defender,
+            damage=4,
+            related_actions=[
+                Action(
+                    card_id=self.id,
+                    source=attacker,
+                    target=attacker,
+                    resource_changes={
+                        Resource.QI: 1
+                    }
+                )
+            ]
+        ).execute()

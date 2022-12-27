@@ -3,7 +3,7 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Cloud Sword Touch Earth'
+    display_name = 'Cloud Sword Touch Earth'
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(source=attacker, target=defender, damage=6).execute()
+        return Action(card_id=self.id, source=attacker, target=defender, damage=6).execute()

@@ -3,12 +3,12 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Thunder Sword'
+    display_name = 'Thunder Sword'
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            source=attacker,
+            card_id=self.id, source=attacker,
             target=defender,
             damage=5,
-            injured_action=Action(source=attacker, target=defender, damage=6)
+            injured_action=Action(card_id=self.id, source=attacker, target=defender, damage=6)
         ).execute()

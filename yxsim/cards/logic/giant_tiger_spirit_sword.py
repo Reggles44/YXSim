@@ -3,7 +3,7 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Normal Attack'
+    display_name = 'Giant Tiger Spirit Sword'
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(source=attacker, target=defender, damage=10).execute()
+        return Action(card_id=self.id, source=attacker, target=defender, damage=10).execute()

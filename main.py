@@ -5,6 +5,9 @@ from yxsim.config import configure_logging
 combat_data = {
     'PLAYER': {
         'max_health': 100,
+        'cultivation': 1,
+        'slots': 5,
+
         'character': '',
         'destinies': [],
         'cards': [
@@ -14,20 +17,20 @@ combat_data = {
             'light_sword',
             'giant_tiger_spirit_sword'
         ],
-        'slots': 8,
         'star_slots': [],
-        'cultivation': 10
     },
     'ENEMY': {
+        'max_health': 100,
+        'cultivation': 1,
+        'slots': 5,
+
         'character': '',
         'destinies': [],
         'cards': [],
-        'slots': 8,
         'star_slots': [],
-        'cultivation': 10
     }
 }
 
 if __name__ == '__main__':
     configure_logging()
-    combat(*[Player(**pdata) for pdata in combat_data.values()])
+    combat(*[Player(id=id, **pdata) for id, pdata in combat_data.items()])

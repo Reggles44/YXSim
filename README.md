@@ -1,7 +1,7 @@
 Yi Xian Simulator
 ===================
 
-This is a mock of the game engine for [Yi Xian: The Cultivation Card Game](https://store.steampowered.com/app/1948800/Yi_Xian_The_Cultivation_Card_Game/).
+This is a mock game engine for [Yi Xian: The Cultivation Card Game](https://store.steampowered.com/app/1948800/Yi_Xian_The_Cultivation_Card_Game/).
 
 
 Code Examples
@@ -26,10 +26,10 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Normal Attack'
+    display_name = 'Normal Attack'
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(source=attacker, target=defender, damage=3).execute()
+        return Action(card_id=self.id, source=attacker, target=defender, damage=3).execute()
 ```
 
 ### Card That Change Resources
@@ -46,11 +46,11 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Guard Qi'
+    display_name = 'Guard Qi'
 
-    def play(self, attacker, defender, **kwargs) -> bool:
+    def play(self, attacker, **kwargs) -> bool:
         return Action(
-            source=attacker,
+            card_id=self.id, source=attacker,
             target=attacker,
             resource_changes={
                 Resource.DEF: 5, Resource.QI: 1
@@ -70,13 +70,13 @@ from yxsim.cards.base import Card
 
 
 class CardType(Card):
-    id = 'Thunder Sword'
+    display_name = 'Thunder Sword'
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            source=attacker,
+            card_id=self.id, source=attacker,
             target=defender,
             damage=5,
-            injured_action=Action(source=attacker, target=defender, damage=6)
+            injured_action=Action(card_id=self.id, source=attacker, target=defender, damage=6)
         ).execute()
 ```

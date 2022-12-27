@@ -4,14 +4,15 @@ from yxsim.resources import Resource
 
 
 class CardType(Card):
-    id = 'Sword Defense'
+    display_name = 'Sword Defense'
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            source=attacker,
+            card_id=self.id, source=attacker,
             target=defender,
             damage=8,
             injured_action=Action(
+                card_id=self.id,
                 source=attacker,
                 target=attacker,
                 resource_changes={

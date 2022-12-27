@@ -9,10 +9,13 @@ logger = logging.getLogger()
 
 @dataclass
 class Action:
+    # Meta Data
+    card_id: str
     source: 'Player'
     target: 'Player' = None
     executed: bool = field(default=False, init=False)
     success: bool = field(default=False, init=False)
+    nested: bool = False
 
     # Input Values
     damage: int = 0
@@ -35,23 +38,27 @@ class Action:
         self.executed = True
         logger.debug(self)
 
+        if not self.nested:
+            self.source.actions.append(self)
+
+        # TODO Set measured results as data is being processed
+
         if self.damage > 0:
             self.target.health -= self.damage
+
+            # TODO figure out injured
+            # Is it even possible to have an injury card that doesn't do damage?
 
         if self.healing > 0:
             self.target.health = min(self.target.max_health)
 
+        # TODO Figure out cloud hit stuff
         if self.cloud_hit_action:
             if self.source.resources.get(Resource.CLOUD_HIT):
                 self.cloud_hit_action.execute()
             else:
-                self.source.resources
 
+                pass
+
+        self.success = True
         return self.executed and self.success
-
-    @property
-    def injured(self) -> bool:
-        return self.damage_to_health > 0
-
-
-
