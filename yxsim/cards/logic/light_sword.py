@@ -14,7 +14,11 @@ class CardType(Card):
             source=attacker,
             target=defender,
             damage=4,
-            resource_changes={
-                Resource.QI: 1
-            }
+            related_actions=[
+                Action(
+                    resource_changes={
+                        Resource.QI: 1
+                    }
+                )
+            ]
         ).execute()
