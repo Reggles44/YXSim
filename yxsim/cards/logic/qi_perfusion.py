@@ -19,3 +19,7 @@ class CardType(Card):
                 Resource.IGNORE_DEF: 1
             }
         ).execute()
+
+    def asserts(self, card_user: Player, opponent: Player):
+        assert card_user.resources.get(Resource.IGNORE_DEF) == 1
+        assert card_user.resources.get(Resource.QI) == 2

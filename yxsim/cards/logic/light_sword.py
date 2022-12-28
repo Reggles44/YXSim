@@ -25,3 +25,7 @@ class CardType(Card):
                 )
             ]
         ).execute()
+
+    def asserts(self, card_user: Player, opponent: Player):
+        assert opponent.health == opponent.max_health - 4
+        assert card_user.resources.get(Resource.QI) == 1

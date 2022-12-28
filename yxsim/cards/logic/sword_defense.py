@@ -13,8 +13,12 @@ class CardType(Card):
         return Action(
             card=self,
             source=attacker,
-            target=defender,
+            target=attacker,
             resource_changes={
                 Resource.SWORD_INTENT: 2,
                 Resource.DEF: 4
             }).execute()
+
+    def asserts(self, card_user: Player, opponent: Player):
+        assert card_user.resources.get(Resource.SWORD_INTENT) == 2
+        assert card_user.resources.get(Resource.DEF) == 4

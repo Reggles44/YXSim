@@ -13,7 +13,7 @@ def test_card(name, card):
         card = card_registry[name]
         card.test()
     except NotImplementedError:
-        pass
+        raise
 
 
 

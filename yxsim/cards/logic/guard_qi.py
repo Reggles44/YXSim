@@ -18,3 +18,7 @@ class CardType(Card):
                 Resource.DEF: 5, Resource.QI: 1
             }
         ).execute()
+
+    def asserts(self, card_user: Player, opponent: Player):
+        assert card_user.resources.get(Resource.DEF) == 5
+        assert card_user.resources.get(Resource.QI) == 1
