@@ -9,7 +9,7 @@ class CardType(Card):
     sect = Sect.CLOUD
 
     def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
-        si = attacker.resources.get(Resource.SWORD_INTENT),
+        si = attacker.resources.get(Resource.SWORD_INTENT)
         return Action(
             card=self,
             source=attacker,
@@ -22,3 +22,14 @@ class CardType(Card):
                 Resource.DEF: 9
             }
         ).execute()
+
+    def test_cards(self):
+        return ['sword_slash', self.id]
+
+    def test_limit(self):
+        return 3
+
+    def asserts(self, card_user, opponent):
+        assert card_user.resources.get(Resource.DEF) == 9
+        assert card_user.resources.get(Resource.SWORD_INTENT) == 0
+        assert card_user.resources.get(Resource.QI) == 2

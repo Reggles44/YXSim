@@ -31,11 +31,17 @@ class Action:
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
 
+    # Utility
+    sword_intent_buffer: list = None
+
     # Measured Results
     damage_to_health: int = field(default=0, init=False)
     effective_healing: int = field(default=0, init=False)
 
     def execute(self, parent=None) -> 'bool':
+        if self.sword_intent_buffer is None:
+            self.sword_intent_buffer = list()
+
         # Execution lock so we never execute the same action twice
         if self.executed:
             raise
@@ -57,16 +63,17 @@ class Action:
                 pass
 
         # If we do not have the qi to play this card, do not play it
-        qi = getattr(self.card, 'qi')
-        if qi is not None and qi:
-            player_qi = self.source.resources[Resource.QI]
-            if qi > player_qi:
-                logger.info(f'Could not afford {self.card}; gaining 1 qi instead')
-                self.source.resources[Resource.QI] += 1
-                return False
-            else:
-                logger.debug(f'Spending {qi} qi from a reserve of {self.source.resources[Resource.QI]}')
-                self.source.resources[Resource.QI] -= qi
+        if not parent:
+            qi = getattr(self.card, 'qi')
+            if qi is not None and qi:
+                player_qi = self.source.resources[Resource.QI]
+                if qi > player_qi:
+                    logger.info(f'Could not afford {self.card}; gaining 1 qi instead')
+                    self.source.resources[Resource.QI] += 1
+                    return False
+                else:
+                    logger.debug(f'Spending {qi} qi from a reserve of {self.source.resources[Resource.QI]}')
+                    self.source.resources[Resource.QI] -= qi
 
         if not parent:
             self.source.actions.append(self)
@@ -80,29 +87,19 @@ class Action:
         # Exhaust before changing
         if self.resource_exhaust:
             for k, v in self.resource_exhaust.items():
-                logger.debug(f'Resource {k} starting at self.source.resources[k] decreasing by {v}')
+                logger.debug(f'Resource {k} starting at {self.source.resources[k]} decreasing by {v}')
                 self.source.resources[k] -= v
 
         # Changing is different than exhausting because we have to track total gained and total spent
         # Track gained and spent as different values, instead of summing into one int
         if self.resource_changes:
             for k, v in self.resource_changes.items():
-                if k != Resource.SWORD_INTENT:  # Sword Intent gets modified at the end of the parent execution
-                    logger.debug(f'Resource {k} starting at self.source.resources[k] increasing by {v}')
+                if k == Resource.SWORD_INTENT:
+                    logger.debug(f'Sword Intent starting at {self.source.resources[k]} increasing by {v}')
+                    self.sword_intent_buffer.append((self.target, v))
+                else:
+                    logger.debug(f'Resource {k} starting at {self.source.resources[k]} increasing by {v}')
                     self.target.resources[k] += v
-
-                    # TODO TRACK GAINED AND SPENT
-                elif parent:
-                    # Sword Intent is hard because it needs to be added after everything is done
-                    # Default confioguration
-                    if not self.parent.resource_changes:
-                        self.parent.resource_changes = {k:0}
-                    elif not k in self.parent.resource_changes:
-                        self.parent.resource_changes[k] = 0
-                    logger.debug(f'Resource {k} starting at self.source.resources[k] increasing by {v}')
-                    self.parent.resource_changes[k] += v
-                    # TODO TRACK GAINED AND SPENT
-
 
         if self.damage is not None:
             self.effective_damage = 0
@@ -164,23 +161,28 @@ class Action:
 
         # Resolve end of action configuration changes
         if self.success:
-            if not parent:
+            if parent:
+                self.parent.sword_intent_buffer.extend(self.sword_intent_buffer)
+            else:
+                # Reset sword intent
                 if self.damage or self.any_damage():
+                    logger.debug(f'Reducing Sword Intent to zero')
                     self.source.resources[Resource.SWORD_INTENT] = 0
 
-                try:
-                    self.target.resources[Resource.SWORD_INTENT] += self.resource_changes[Resource.SWORD_INTENT]
-                except KeyError:
-                    logger.debug('Sword Intent not present in resource changes')
-                except TypeError:
-                    logger.debug('Resource changes not defined on action')
+                # Apply sword intent buffer
+                for _t, v in self.sword_intent_buffer:
+                    logger.debug(f'Increasing sword intent by {v} for {_t}')
+                    _t.resources[Resource.SWORD_INTENT] += v
+                self.sword_intent_buffer = list()
 
+                # Calculate Cloud Sword
                 cloud_sword = getattr(self.card, 'cloud_sword')
                 if cloud_sword is not None and cloud_sword:
                     self.source.resources[Resource.CLOUD_HIT] += 1
                 else:
                     self.source.resources[Resource.CLOUD_HIT] = 0
 
+                # Calculate Unrestrained Sword
                 unrestrained_sword = getattr(self.card, 'unrestrained_sword')
                 if unrestrained_sword is not None and unrestrained_sword:
                     self.source.unrestrained_sword_counter += 1
