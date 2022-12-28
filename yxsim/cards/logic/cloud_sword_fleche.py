@@ -20,3 +20,12 @@ class CardType(Card):
             damage=5,
             cloud_hit_action=cloud_hit_action
         ).execute()
+
+    def test_cards(self):
+        return [self.id, self.id]
+
+    def test_limit(self):
+        return 3
+
+    def asserts(self, card_user, opponent):
+        assert opponent.max_health == opponent.health + 13
