@@ -23,10 +23,10 @@ class CardType(Card):
         ).execute()
 
     def test_card(self):
-        p1, p2 = self.generate_test_data(player_kwargs={'cards': ['normal_attack', 'normal_attack', self.id, self.id]})
-        combat(p1, p2, limit=7)
-        self.asserts(p1, p2)
-        return p1, p2
+        card_user, opponent = self.generate_test_data(player_kwargs={'cards': ['normal_attack', 'normal_attack', self.id, self.id]})
+        combat(card_user, opponent, limit=7)
+        self.asserts(card_user, opponent)
+        return card_user, opponent
 
     def asserts(self, card_user, opponent):
         assert card_user.health == card_user.max_health - 3

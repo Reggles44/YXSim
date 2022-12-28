@@ -1,20 +1,31 @@
 import inspect
+import logging
 import typing
 
-
-class EventManager(dict):
-    def add_listener(self, listener: typing.Callable):
-        event = inspect.getmro(listener)[1].__name__
-        self.setdefault(event, []).append(listener)
-
-    def fire(self, event, **kwargs):
-        events = sorted(self.get(event, []), key=lambda event: event.priority)
-        map(lambda x: x(**kwargs), events)
+logger = logging.getLogger()
 
 
 class Event:
-    def listen(self, **kwargs):
+    def __init__(self, source_card, priority=0):
+        self.source_card = source_card
+        self.priority = priority
+
+    def handle(self, **kwargs):
         raise NotImplementedError
+
+
+class EventManager(dict):
+    def add_listener(self, listener: Event):
+        event = inspect.getmro(listener.__class__)[1].__name__
+        self.setdefault(event, []).append(listener)
+        logger.debug(f'{getattr(self, "id", "EventManager")} adding listener {listener.__class__.__name__} for event {event}')
+
+    def fire(self, event, **kwargs):
+        logger.debug(f'{getattr(self, "id", "EventManager")} firing {event} with kwargs {kwargs}')
+        events = sorted(self.get(event, []), key=lambda event: event.priority)
+        logger.debug(f'{getattr(self, "id", "EventManager")} has handlers {events}')
+        for evt in events:
+            evt.handle(**kwargs)
 
 
 class OnSetup(Event):

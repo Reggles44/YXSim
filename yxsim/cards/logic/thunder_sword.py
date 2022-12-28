@@ -21,27 +21,24 @@ class CardType(Card):
             injured_action=Action(card=self, source=attacker, target=defender, damage=6)
         ).execute()
 
-    def asserts(self, card_user: Player, opponent: Player):
+    def test_card(self):
+        card_user, opponent = self.generate_test_data()
+        card_user.resources[Resource.QI] = 1
+        combat(card_user, opponent, limit=1)
         assert opponent.health == opponent.max_health - 11
 
     def test_defense_block(self):
-        p1, p2 = self.generate_test_data()
-        p2.resources[Resource.DEF] = 5
-        combat(p1, p2, limit=1)
-        assert p2.max_health == p2.health
-        return p1, p2
+        card_user, opponent = self.generate_test_data()
+        card_user.resources[Resource.QI] = 1
+        opponent.resources[Resource.DEF] = 5
+        combat(card_user, opponent, limit=1)
+        assert opponent.max_health == opponent.health
+        return card_user, opponent
 
     def test_sword_intent(self):
-        p1, p2 = self.generate_test_data()
-        p1.resources[Resource.SWORD_INTENT] = 5
-        combat(p1, p2, limit=1)
-        assert p2.max_health == p2.health + 21
-        return p1, p2
-
-    def generate_test_data(self, player_kwargs=None, enemy_kwargs=None) -> typing.Tuple[Player, Player]:
-        player_kwargs = player_kwargs or {'cards': [self.id]}
-        enemy_kwargs = enemy_kwargs or {'cards': []}
-        p1 = Player(id="PLAYER", **player_kwargs)
-        p2 = Player(id='ENEMY', **enemy_kwargs)
-        p1.resources[Resource.QI] = 1
-        return p1, p2
+        card_user, opponent = self.generate_test_data()
+        card_user.resources[Resource.QI] = 1
+        card_user.resources[Resource.SWORD_INTENT] = 5
+        combat(card_user, opponent, limit=1)
+        assert opponent.max_health == opponent.health + 21
+        return card_user, opponent

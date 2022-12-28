@@ -1,9 +1,12 @@
 import collections
+import logging
 
 from yxsim.cards.logic import registry as card_registry
 from yxsim.characters.logic import registry as character_registry
 from yxsim.destinies.logic import registry as destiny_registry
 from yxsim.events import EventManager
+
+logger = logging.getLogger()
 
 
 class Player(EventManager):
@@ -41,13 +44,25 @@ class Player(EventManager):
         self.card_counter = 0
         self.cloud_hit_active = False  # Whether cloud hit is permanently active
 
+        logger.debug(self)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return f'''Player ({', '.join([f'{name}={getattr(self, name).__repr__()}' for name in vars(self)])})'''
+
     def play_next_card(self, **kwargs):
         if self.card_counter in self.star_slots:
             kwargs['star_slot'] = True
 
         next_card = self.cards[self.card_counter]
+        logger.debug(f'{self.id} playing {next_card}')
+
         # TODO: logic for skip, consume, and continuous
         success = next_card.play(**kwargs)
+
+        self.fire('OnPlayCard', card=next_card, **kwargs)
 
         if success:
            self.card_counter += 1

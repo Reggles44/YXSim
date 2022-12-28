@@ -22,6 +22,8 @@ class CardType(Card):
             ]
         ).execute()
 
-    def asserts(self, card_user: Player, opponent: Player):
+    def test_card(self):
+        card_user, opponent = self.generate_test_data()
+        combat(card_user, opponent, limit=1)
         assert card_user.resources[Resource.QI] == 2
         assert opponent.health == opponent.max_health - 2

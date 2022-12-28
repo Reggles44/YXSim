@@ -2,6 +2,7 @@ import typing
 
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.combat import combat
 from yxsim.player import Player
 from yxsim.player import Player
 from yxsim.resources import Sect, Resource
@@ -33,11 +34,9 @@ class CardType(Card):
             ]
         ).execute()
 
-    def generate_test_data(self) -> typing.Tuple[Player, Player]:
-        player, enemy = super().generate_test_data()
-        enemy.resources[Resource.DEF] = 1
-        return player, enemy
-
-    def asserts(self, card_user: Player, opponent: Player):
+    def test_card(self):
+        card_user, opponent = super().generate_test_data()
+        opponent.resources[Resource.DEF] = 1
+        combat(card_user, opponent, limit=1)
         assert opponent.health == opponent.max_health - 3
         assert card_user.resources.get(Resource.QI) == 3

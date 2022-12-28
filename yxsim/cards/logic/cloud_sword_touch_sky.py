@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.combat import combat
 from yxsim.player import Player
 from yxsim.resources import Sect, Resource
 
@@ -18,6 +19,8 @@ class CardType(Card):
             damage=6,
         ).execute()
 
-    def asserts(self, card_user, opponent):
+    def test_card(self):
+        card_user, opponent = self.generate_test_data()
+        combat(card_user, opponent, limit=1)
         assert opponent.max_health == opponent.health + 6
         assert card_user.resources.get(Resource.CLOUD_HIT) == 1

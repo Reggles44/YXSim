@@ -23,12 +23,17 @@ We then return the boolean value from the `execute` method to show if the card w
 ```python
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
+from yxsim.resources import Sect
 
 
 class CardType(Card):
     display_name = 'Normal Attack'
+    phase = 1
+    sect = Sect.CLOUD
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:\n        return Action(card=self, source=attacker, target=defender, damage=3).execute()
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+        return Action(card=self, source=attacker, target=defender, damage=3).execute()
 ```
 
 ### Card That Change Resources
@@ -39,17 +44,21 @@ We then define an `Action` with `resource_changes` to a dict where the keys are 
 This will then be used to update the `resources` attribute on the `Player`.
 
 ```python
-from yxsim.resources import Resource
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
+from yxsim.resources import Resource, Sect
 
 
 class CardType(Card):
     display_name = 'Guard Qi'
+    phase = 1
+    sect = Sect.CLOUD
 
-    def play(self, attacker, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(
-            card=self, source=attacker,
+            card=self,
+            source=attacker,
             target=attacker,
             resource_changes={
                 Resource.DEF: 5, Resource.QI: 1
@@ -66,15 +75,57 @@ We can then simply call the `execute` method on the top `Action`.
 ```python
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
+from yxsim.resources import Sect
 
 
 class CardType(Card):
     display_name = 'Thunder Sword'
+    phase = 1
+    sect = Sect.CLOUD
+    qi = 1
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:\n        return Action(
-            card=self, source=attacker,
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+        return Action(
+            card=self,
+            source=attacker,
             target=defender,
             damage=5,
             injured_action=Action(card=self, source=attacker, target=defender, damage=6)
         ).execute()
+```
+
+### Continuous Cards
+
+We will be using [Cloud Citta Dharma](yxsim/cards/logic/cloud_citta_dharma.py) as an example of how to implement a continuous card.
+First, separately from the `CardType` definition we need to make our listener using the base `OnPlayCard`.
+Second, that class needs to override the function `handle` which will contain all of it's functionality.
+For this specific card we only need to check if the card played has `cloud_sword` equal to `True` and if that is the case we make an `Action` to heal the player for 2.
+It is important to note that in the `Action` we are passing `card=self.source_card` as this value will reference the `Cloud Citta Dharma` card.
+After defining our listener we can create the `CardType` and within the play function we simply call the `add_listener` function from the attacker and pass in a `CloudCittaDHarmaOnPlayCard` object.
+To note, we will also need to set `exhausted` to `True` and return `True` to say that the card was successfully played.
+
+```python
+from yxsim.action import Action
+from yxsim.cards.base import Card
+from yxsim.player import Player
+from yxsim.resources import Sect
+from yxsim.events import OnPlayCard
+
+
+class CloudCittaDharmaOnPlayCard(OnPlayCard):
+    def handle(self, card: Card, attacker: Player, defender: Player, **kwargs):
+        if card.cloud_sword is True:
+            Action(card=self.source_card, source=attacker, target=attacker, healing=2).execute()
+
+
+class CardType(Card):
+    display_name = 'Cloud Citta Dharma'
+    phase = 1
+    sect = Sect.CLOUD
+
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+        self.exhausted = True
+        attacker.add_listener(CloudCittaDharmaOnPlayCard(self, priority=0))
+        return True
 ```

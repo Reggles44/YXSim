@@ -1,3 +1,4 @@
+from yxsim.combat import combat
 from yxsim.resources import Sect, Resource
 from yxsim.action import Action
 from yxsim.cards.base import Card
@@ -26,6 +27,8 @@ class CardType(Card):
             ]
         ).execute()
 
-    def asserts(self, card_user: Player, opponent: Player):
+    def test_card(self):
+        card_user, opponent = self.generate_test_data()
+        combat(card_user, opponent, limit=1)
         assert opponent.health == opponent.max_health - 4
         assert card_user.resources.get(Resource.QI) == 1

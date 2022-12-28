@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.combat import combat
 from yxsim.player import Player
 from yxsim.resources import Sect
 
@@ -12,7 +13,9 @@ class CardType(Card):
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(card=self, source=attacker, target=defender, damage=3).execute()
 
-    def asserts(self, card_user: Player, opponent: Player):
+    def test_card(self):
+        card_user, opponent = self.generate_test_data()
+        combat(card_user, opponent, limit=1)
         action = card_user.actions[0]
         assert isinstance(action, Action)
         assert action.card.id == self.id
