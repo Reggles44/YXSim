@@ -20,7 +20,6 @@ class CardType(Card):
             related_actions=[
                 Action(card=self, source=attacker, target=defender, damage=ReferenceValue(lambda attacker: 2 if attacker.resources.get(Resource.QI) > 2 else None)) for _ in range(2)
             ]
-            if self.source.resources.get(Resource.QI) >= 3 - gain_qi else None
         ).execute()
 
     # TODO when we have the ability to do multiple testst test

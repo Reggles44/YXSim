@@ -14,3 +14,5 @@ def test_card(name, card):
 
 
 
+# TODO
+# test holding sword intent
