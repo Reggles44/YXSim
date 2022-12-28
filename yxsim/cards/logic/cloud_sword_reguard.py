@@ -19,3 +19,4 @@ class CardType(Card):
             },
             cloud_hit_action=Action(card=self, source=attacker, target=attacker, healing=3)
         ).execute()
+

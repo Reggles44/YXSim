@@ -16,3 +16,12 @@ class CardType(Card):
             target=defender,
             cloud_hit_action=Action(card=self, source=attacker, target=defender, damage=9)
         ).execute()
+
+    def test_cards(self):
+        return [self.id, self.id]
+
+    def test_limit(self):
+        return 3
+
+    def asserts(self, card_user, opponent):
+        assert opponent.max_health == opponent.health + 9

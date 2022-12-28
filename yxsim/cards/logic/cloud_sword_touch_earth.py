@@ -19,3 +19,13 @@ class CardType(Card):
             cloud_hit_action=cloud_hit_action,
             damage=4,
         ).execute()
+
+    def test_cards(self):
+        return [self.id, self.id]
+
+    def test_limit(self):
+        return 3
+
+    def asserts(self, card_user, opponent):
+        assert opponent.max_health == opponent.health + 8
+        assert card_user.resources.get(Resource.DEF) == 4
