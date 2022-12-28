@@ -18,7 +18,12 @@ class CardType(Card):
             source=attacker,
             target=defender,
             damage=8,
-            injured_action=Action(card=self, source=attacker, target=attacker, resource_changes=ReferenceValue(lambda parent: {Resource.DEF: parent.damage_to_health}))
+            injured_action=Action(
+                card=self,
+                source=attacker,
+                target=attacker,
+                resource_changes=ReferenceValue(lambda parent: {Resource.DEF: parent.damage_to_health})
+            )
         ).execute()
 
     def test_card(self):

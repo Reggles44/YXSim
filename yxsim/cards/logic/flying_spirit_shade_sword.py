@@ -9,7 +9,7 @@ from yxsim.resources import Sect, Resource
 
 
 class CardType(Card):
-    display_name = 'Normal Attack'
+    display_name = 'Flying Spirit Shade Sword'
     phase = 1
     sect = Sect.CLOUD
 
