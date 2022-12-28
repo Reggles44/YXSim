@@ -29,7 +29,7 @@ class CardType(Card):
     display_name = 'Normal Attack'
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(card_id=self.id, source=attacker, target=defender, damage=3).execute()
+        return Action(card=self, source=attacker, target=defender, damage=3).execute()
 ```
 
 ### Card That Change Resources
@@ -50,7 +50,7 @@ class CardType(Card):
 
     def play(self, attacker, **kwargs) -> bool:
         return Action(
-            card_id=self.id, source=attacker,
+            card=self, source=attacker,
             target=attacker,
             resource_changes={
                 Resource.DEF: 5, Resource.QI: 1
@@ -74,9 +74,9 @@ class CardType(Card):
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            card_id=self.id, source=attacker,
+            card=self, source=attacker,
             target=defender,
             damage=5,
-            injured_action=Action(card_id=self.id, source=attacker, target=defender, damage=6)
+            injured_action=Action(card=self, source=attacker, target=defender, damage=6)
         ).execute()
 ```

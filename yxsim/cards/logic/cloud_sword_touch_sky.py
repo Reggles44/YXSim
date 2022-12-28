@@ -8,12 +8,12 @@ class CardType(Card):
     cloud_hit = True
     phase = 1
     sect = Sect.CLOUD
+    cloud_sword = True
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            card_id=self.id,
+            card=self,
             source=attacker,
             target=defender,
             damage=6,
-            cloud_sword=True
         ).execute()

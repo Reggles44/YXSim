@@ -7,11 +7,12 @@ class CardType(Card):
     display_name = 'Unrestrained Sword - One'
     phase = 2
     sect = Sect.CLOUD
+    unrestrained_sword = True
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            card_id=self.id,
+            card=self,
             source=attacker,
             target=defender,
-            damage=5 + attacker.unrestrained_sword_counter*2,
+            damage=5 + attacker.resources.get(Resource.UNRESTRAINED_SWORD_COUNTER)*2,
         ).execute()

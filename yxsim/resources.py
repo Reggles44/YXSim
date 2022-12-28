@@ -7,9 +7,12 @@ class Resource(Enum):
     SWORD_INTENT = 3
     CLOUD_HIT = 4
     INCREASE_ATTACK = 5
+    UNRESTRAINED_SWORD_COUNTER = 6
+    CLOUD_HIT_COUNTER = 7
+    GUARD_UP = 8
 
 
-    IGNORE_DEFENSE = 101
+    IGNORE_DEF = 101
 
 class Sect(Enum):
     CLOUD = 1

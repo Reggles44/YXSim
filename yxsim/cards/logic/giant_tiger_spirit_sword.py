@@ -7,6 +7,7 @@ class CardType(Card):
     display_name = 'Giant Tiger Spirit Sword'
     phase = 1
     sect = Sect.CLOUD
+    qi = 1
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(qi=1, card_id=self.id, source=attacker, target=defender, damage=10).execute()
+        return Action(card=self, source=attacker, target=defender, damage=10).execute()

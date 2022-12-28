@@ -9,4 +9,12 @@ class CardType(Card):
     sect = Sect.CLOUD
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(card_id=self.id, source=attacker, target=attacker, resource_changes={Resource.QI: 2, Resource.IGNORE_DEFENSE: 1}).execute()
+        return Action(
+            card=self,
+            source=attacker,
+            target=attacker,
+            resource_changes={
+                Resource.QI: 2,
+                Resource.IGNORE_DEFENSE: 1
+            }
+        ).execute()

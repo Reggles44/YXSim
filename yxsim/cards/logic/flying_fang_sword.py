@@ -7,15 +7,15 @@ class CardType(Card):
     display_name = 'Flying Fang Sword'
     phase = 1
     sect = Sect.CLOUD
+    qi = 1
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            qi = 1,
-            card_id=self.id, source=attacker,
+            card=self, source=attacker,
             target=defender,
             damage=8,
             injured_action=Action(
-                card_id=self.id,
+                card=self,
                 source=attacker,
                 target=attacker,
                 resource_changes={
