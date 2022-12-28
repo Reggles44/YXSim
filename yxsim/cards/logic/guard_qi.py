@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
 from yxsim.resources import Resource, Sect
 
 

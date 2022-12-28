@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
 from yxsim.resources import Sect, Resource
 from yxsim.util import ReferenceValue
 
@@ -8,7 +9,7 @@ class CardType(Card):
     phase = 2
     sect = Sect.CLOUD
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         gain_qi = 2
         return Action(
             card=self,
@@ -18,7 +19,7 @@ class CardType(Card):
                 Resource.QI: gain_qi
             },
             related_actions=[
-                Action(card=self, source=attacker, target=defender, damage=ReferenceValue(lambda attacker: 2 if attacker.resources.get(Resource.QI) > 2 else None)) for _ in range(2)
+                Action(card=self, source=attacker, target=defender, damage=ReferenceValue(lambda source: 2 if source.resources[Resource.QI] > 2 else None)) for _ in range(2)
             ]
         ).execute()
 

@@ -185,7 +185,7 @@ class Action:
                 # Calculate Unrestrained Sword
                 unrestrained_sword = getattr(self.card, 'unrestrained_sword')
                 if unrestrained_sword is not None and unrestrained_sword:
-                    self.source.unrestrained_sword_counter += 1
+                    self.source.resources[Resource.UNRESTRAINED_SWORD_COUNTER] += 1
 
         return self.executed and self.success
 

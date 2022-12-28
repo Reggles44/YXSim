@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
 from yxsim.resources import Sect, Resource
 
 
@@ -9,7 +10,7 @@ class CardType(Card):
     sect = Sect.CLOUD
     qi = 1
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,
@@ -20,6 +21,5 @@ class CardType(Card):
                 source=attacker,
                 target=defender,
                 resource_changes={Resource.SWORD_INTENT: 3},
-                unrestrained_sword=True # TODO What is this meant to be now?
             )
         ).execute()

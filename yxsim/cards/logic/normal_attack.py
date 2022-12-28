@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
 from yxsim.resources import Sect
 
 
@@ -8,10 +9,10 @@ class CardType(Card):
     phase = 1
     sect = Sect.CLOUD
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(card=self, source=attacker, target=defender, damage=3).execute()
 
-    def asserts(self, card_user: 'Player', opponent: 'Player'):
+    def asserts(self, card_user: Player, opponent: Player):
         action = card_user.actions[0]
         assert isinstance(action, Action)
         assert action.card.id == self.id

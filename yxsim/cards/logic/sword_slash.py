@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
 from yxsim.resources import Sect, Resource
 
 
@@ -8,7 +9,7 @@ class CardType(Card):
     phase = 1
     sect = Sect.CLOUD
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,

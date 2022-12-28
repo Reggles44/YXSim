@@ -1,5 +1,6 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
+from yxsim.player import Player
 from yxsim.resources import Sect, Resource
 from yxsim.util import ReferenceValue
 from yxsim.combat import combat
@@ -10,7 +11,7 @@ class CardType(Card):
     sect = Sect.CLOUD
     cloud_sword = True
 
-    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,
@@ -21,6 +22,6 @@ class CardType(Card):
             ]
         ).execute()
 
-    def asserts(self, card_user: 'Player', opponent: 'Player'):
+    def asserts(self, card_user: Player, opponent: Player):
         assert card_user.resources[Resource.QI] == 2
         assert opponent.health == opponent.max_health - 2
