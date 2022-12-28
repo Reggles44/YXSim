@@ -10,7 +10,7 @@ class CardType(Card):
 
     def play(self, attacker, **kwargs) -> bool:
         return Action(
-            card_id=self.id,
+            card=self,
             source=attacker,
             target=attacker,
             resource_changes={

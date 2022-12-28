@@ -9,12 +9,12 @@ class CardType(Card):
     sect = Sect.CLOUD
 
     def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(card_id=self.id, source=attacker, target=defender, damage=3).execute()
+        return Action(card=self, source=attacker, target=defender, damage=3).execute()
 
     def asserts(self, card_user, opponent):
         action = card_user.actions[0]
         assert isinstance(action, Action)
-        assert action.card_id == self.id
+        assert action.card.id == self.id
         assert action.source == card_user
         assert action.target == opponent
         assert action.damage == 3

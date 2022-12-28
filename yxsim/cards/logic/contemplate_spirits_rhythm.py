@@ -12,7 +12,7 @@ class CardType(Card):
 
         si = attacker.resources.get(Resource.SWORD_INTENT),
         return Action(
-            card_id=self.id,
+            card=self,
             source=attacker,
             target=attacker,
             resource_exhaust={

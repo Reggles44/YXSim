@@ -7,13 +7,13 @@ class CardType(Card):
     display_name = 'Cloud Sword Riddle'
     phase = 2
     sect = Sect.CLOUD
+    cloud_sword = True
 
     def play(self, attacker, defender, **kwargs) -> bool:
 
         return Action(
-            card_id=self.id,
+            card=self,
             source=attacker,
             target=defender,
-            cloud_sword=True,
-            cloud_hit_action=Action(card_id=self.id, source=attacker, target=defender, damage=9)
+            cloud_hit_action=Action(card=self, source=attacker, target=defender, damage=9)
         ).execute()

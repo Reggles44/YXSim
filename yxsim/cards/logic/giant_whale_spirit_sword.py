@@ -7,11 +7,11 @@ class CardType(Card):
     display_name = 'Giant Whale Spirit Sword'
     phase = 2
     sect = Sect.CLOUD
+    qi = 2
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            qi=2,
-            card_id=self.id,
+            card=self,
             source=attacker,
             target=defender,
             damage=16

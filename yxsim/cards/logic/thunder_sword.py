@@ -7,12 +7,12 @@ class CardType(Card):
     display_name = 'Thunder Sword'
     phase = 1
     sect = Sect.CLOUD
+    qi = 1
 
     def play(self, attacker, defender, **kwargs) -> bool:
         return Action(
-            qi=1,
-            card_id=self.id, source=attacker,
+            card=self, source=attacker,
             target=defender,
             damage=5,
-            injured_action=Action(card_id=self.id, source=attacker, target=defender, damage=6)
+            injured_action=Action(card=self, source=attacker, target=defender, damage=6)
         ).execute()
