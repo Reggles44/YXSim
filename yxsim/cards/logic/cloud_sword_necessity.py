@@ -12,16 +12,14 @@ class CardType(Card):
     sect = Sect.CLOUD
     cloud_sword = True
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-        damage = 4
-
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         cloud_hit_action = Action(card=self, source=attacker, target=attacker, resource_changes={Resource.IGNORE_DEF: 1})
         return Action(
             card=self,
             source=attacker,
             target=defender,
             related_actions=[
-                Action(card=self, source=attacker, target=defender, damage=damage) for _ in range(2)
+                Action(card=self, source=attacker, target=defender, damage=4) for _ in range(2)
             ],
             cloud_hit_action=cloud_hit_action
         ).execute()
@@ -32,6 +30,6 @@ class CardType(Card):
     def test_limit(self):
         return 3
 
-    def asserts(self, card_user, opponent):
+    def asserts(self, card_user: 'Player', opponent: 'Player'):
         assert opponent.max_health == opponent.health + 16
         assert card_user.resources.get(Resource.IGNORE_DEF) == 1

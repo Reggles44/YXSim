@@ -8,7 +8,7 @@ class CardType(Card):
     phase = 1
     sect = Sect.CLOUD
 
-    def play(self, attacker, defender, **kwargs) -> bool:
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,

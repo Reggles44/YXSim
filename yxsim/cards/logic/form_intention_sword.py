@@ -9,7 +9,7 @@ class CardType(Card):
     sect = Sect.CLOUD
     qi = 1
 
-    def play(self, attacker, defender, **kwargs) -> bool:
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,
@@ -19,7 +19,7 @@ class CardType(Card):
                 card=self,
                 source=attacker,
                 target=defender,
-                resource_changes={Resource.SWORD_INTENT:3},
-                unrestrained_sword=True
+                resource_changes={Resource.SWORD_INTENT: 3},
+                unrestrained_sword=True # TODO What is this meant to be now?
             )
         ).execute()

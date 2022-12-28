@@ -28,8 +28,7 @@ from yxsim.cards.base import Card
 class CardType(Card):
     display_name = 'Normal Attack'
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(card=self, source=attacker, target=defender, damage=3).execute()
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:\n        return Action(card=self, source=attacker, target=defender, damage=3).execute()
 ```
 
 ### Card That Change Resources
@@ -72,8 +71,7 @@ from yxsim.cards.base import Card
 class CardType(Card):
     display_name = 'Thunder Sword'
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-        return Action(
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:\n        return Action(
             card=self, source=attacker,
             target=defender,
             damage=5,

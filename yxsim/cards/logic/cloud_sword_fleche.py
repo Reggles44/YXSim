@@ -9,16 +9,13 @@ class CardType(Card):
     sect = Sect.CLOUD
     cloud_sword = True
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-        damage = 5
-
-        cloud_hit_action = Action(card=self, source=attacker, target=defender, damage=3)
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,
             target=defender,
             damage=5,
-            cloud_hit_action=cloud_hit_action
+            cloud_hit_action=Action(card=self, source=attacker, target=defender, damage=3)
         ).execute()
 
     def test_cards(self):
@@ -27,5 +24,5 @@ class CardType(Card):
     def test_limit(self):
         return 3
 
-    def asserts(self, card_user, opponent):
+    def asserts(self, card_user: 'Player', opponent: 'Player'):
         assert opponent.max_health == opponent.health + 13
