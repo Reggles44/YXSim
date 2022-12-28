@@ -8,8 +8,7 @@ class CardType(Card):
     phase = 2
     sect = Sect.CLOUD
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         si = attacker.resources.get(Resource.SWORD_INTENT),
         return Action(
             card=self,
@@ -18,7 +17,7 @@ class CardType(Card):
             resource_exhaust={
                 Resource.SWORD_INTENT:si,
             },
-            resource_change={
+            resource_changes={
                 Resource.QI: si,
                 Resource.DEF: 9
             }

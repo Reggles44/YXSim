@@ -10,8 +10,7 @@ class CardType(Card):
     sect = Sect.CLOUD
     cloud_sword = True
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,
@@ -22,6 +21,6 @@ class CardType(Card):
             ]
         ).execute()
 
-    def asserts(self, card_user, opponent):
+    def asserts(self, card_user: 'Player', opponent: 'Player'):
         assert card_user.resources[Resource.QI] == 2
         assert opponent.health == opponent.max_health - 2

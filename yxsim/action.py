@@ -1,6 +1,7 @@
+import dataclasses
 import logging
 import typing
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 from yxsim.resources import Resource
 
@@ -15,18 +16,18 @@ class Action:
     target: 'Player' = None
     executed: bool = field(default=False, init=False)
     success: bool = field(default=False, init=False)
-    nested: bool = False
+    parent: 'Action' = None
 
     # Input Values
-    damage: int = None
-    ignore_armor: bool = False  # For things like Ice Fulu
-    healing: int = None
-    max_hp_change: int = None
-    resource_changes: dict = None
-    resource_exhaust: dict = None
+    damage: int = field(default=None, metadata={'input': True})
+    ignore_armor: bool = field(default=False, metadata={'input': True})  # For things like Ice Fulu
+    healing: int = field(default=None, metadata={'input': True})
+    max_hp_change: int = field(default=None, metadata={'input': True})
+    resource_changes: dict = field(default=None, metadata={'input': True})
+    resource_exhaust: dict = field(default=None, metadata={'input': True})
 
     # Action Nesting
-    related_actions: typing.List['Action'] = None
+    related_actions: list['Action'] = None
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
 
@@ -34,36 +35,26 @@ class Action:
     damage_to_health: int = field(default=0, init=False)
     effective_healing: int = field(default=0, init=False)
 
-    def any_damage(self):
-        return any([
-            self.damage,
-            self.cloud_hit_action and self.cloud_hit_action.any_damage(),
-            self.injured_action and self.injured_action.any_damage(),
-            self.related_actions and any([ra.any_damage() for ra in self.related_actions])
-        ])
-
     def execute(self, parent=None) -> 'bool':
-        for property in ['damage', 'ignore_armor', 'healing', 'max_hp_change', 'resource_changes', 'resource_exhaust']:
-            attr = getattr(self, property)
-            try:
-                setattr(self, property, attr.cast())
-            except AttributeError:
-                pass
-
-        if not parent:
-            logger.info(f'Executing event for {self.card.id}: {self}')
-        else:
-            logger.debug(f'Executing child event {self.card.id}: {self}')
-
-        def relative_value(v):
-            if isinstance(v, int):
-                return v
-            else:
-                return getattr(parent, v)
-
+        # Execution lock so we never execute the same action twice
         if self.executed:
             raise
         self.executed = True
+
+        # Logging and setting Parent for any child action
+        if not parent:
+            logger.info(f'Executing action for {self.card.id}: {self}')
+        else:
+            self.parent = parent
+            logger.debug(f'Executing child action {self.card.id}: {self}')
+
+        # Convert all of our `RelativeAction` to values
+        for field in filter(lambda f: f.metadata.get('input'), fields(self)):
+            attr = getattr(self, field.name)
+            try:
+                setattr(self, field.name, attr.cast(**dataclasses.asdict(self)))
+            except AttributeError:
+                pass
 
         # If we do not have the qi to play this card, do not play it
         qi = getattr(self.card, 'qi')
@@ -89,7 +80,6 @@ class Action:
         # Exhaust before changing
         if self.resource_exhaust:
             for k, v in self.resource_exhaust.items():
-                v = relative_value(v)
                 logger.debug(f'Resource {k} starting at self.source.resources[k] decreasing by {v}')
                 self.source.resources[k] -= v
 
@@ -98,7 +88,6 @@ class Action:
         if self.resource_changes:
             for k, v in self.resource_changes.items():
                 if k != Resource.SWORD_INTENT:  # Sword Intent gets modified at the end of the parent execution
-                    v = relative_value(v)
                     logger.debug(f'Resource {k} starting at self.source.resources[k] increasing by {v}')
                     self.target.resources[k] += v
 
@@ -196,5 +185,13 @@ class Action:
                 if unrestrained_sword is not None and unrestrained_sword:
                     self.source.unrestrained_sword_counter += 1
 
-
         return self.executed and self.success
+
+
+    def any_damage(self):
+        return any([
+            self.damage,
+            self.cloud_hit_action and self.cloud_hit_action.any_damage(),
+            self.injured_action and self.injured_action.any_damage(),
+            self.related_actions and any([ra.any_damage() for ra in self.related_actions])
+        ])

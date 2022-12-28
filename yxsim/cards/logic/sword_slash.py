@@ -8,17 +8,18 @@ class CardType(Card):
     phase = 1
     sect = Sect.CLOUD
 
-    def play(self, attacker, defender, **kwargs) -> bool:
-        sword_intent_buff = Action(
-            card=self,
-            source=attacker,
-            target=attacker,
-            resource_changes={Resource.SWORD_INTENT: 2}
-        )
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         return Action(
             card=self,
             source=attacker,
             target=defender,
             damage=3,
-            related_actions=[sword_intent_buff]
+            related_actions=[
+                Action(
+                    card=self,
+                    source=attacker,
+                    target=attacker,
+                    resource_changes={Resource.SWORD_INTENT: 2}
+                )
+            ]
         ).execute()

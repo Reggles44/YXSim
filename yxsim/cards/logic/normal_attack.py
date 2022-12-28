@@ -8,10 +8,10 @@ class CardType(Card):
     phase = 1
     sect = Sect.CLOUD
 
-    def play(self, attacker, defender, **kwargs) -> bool:
+    def play(self, attacker: 'Player', defender: 'Player', **kwargs) -> bool:
         return Action(card=self, source=attacker, target=defender, damage=3).execute()
 
-    def asserts(self, card_user, opponent):
+    def asserts(self, card_user: 'Player', opponent: 'Player'):
         action = card_user.actions[0]
         assert isinstance(action, Action)
         assert action.card.id == self.id
@@ -20,4 +20,4 @@ class CardType(Card):
         assert action.damage == 3
         assert action.executed is True
         assert action.success is True
-        assert action.nested is False
+        assert opponent.health == opponent.max_health - 3
