@@ -52,7 +52,7 @@ class Action:
         for field in filter(lambda f: f.metadata.get('input'), fields(self)):
             attr = getattr(self, field.name)
             try:
-                setattr(self, field.name, attr.cast(**dataclasses.asdict(self)))
+                setattr(self, field.name, attr.cast(**self.__dict__))
             except AttributeError:
                 pass
 
