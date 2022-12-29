@@ -14,7 +14,7 @@ class Resource(Enum):
     HEXAGRAM = 11
     IGNORE_DEF = 12
     STATIC_DEF = 13
-    STAR_POINT = 14
+    STAR_POWER = 14
 
     CHASE_BLOCKED = 90
 
