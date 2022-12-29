@@ -14,6 +14,7 @@ class Resource(Enum):
     HEXAGRAM = 11
     IGNORE_DEF = 12
     STATIC_DEF = 13
+    STAR_POINT = 14
 
     CHASE_BLOCKED = 90
 
@@ -28,7 +29,7 @@ class Resource(Enum):
 
 class Sect(Enum):
     CLOUD = 1
-    HEPASTAR = 2
+    HEPTASTAR = 2
     ELEMENTS = 3
 
 
