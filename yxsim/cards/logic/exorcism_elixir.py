@@ -19,7 +19,7 @@ class CardType(Card):
         self.exhausted = True
 
         def random_debuff(source):
-            available_debuffs = list(filter(bool, set(source.resources.keys()) & set(Resource.debuffs())))
+            available_debuffs = list(filter(lambda d: source.resources[d] > 0, set(source.resources.keys()) & set(Resource.debuffs())))
             if available_debuffs:
                 return {random.choice(available_debuffs): -3}
 
@@ -39,20 +39,22 @@ class CardType(Card):
         ).execute()
 
     def test_card(self):
-        card_user, opponent = self.generate_test_data()
+        for _ in range(30):
+            card_user, opponent = self.generate_test_data()
 
-        card_user.resources[Resource.WEAKENED] = 3
-        card_user.resources[Resource.FLAW] = 3
+            card_user.resources[Resource.WEAKENED] = 3
+            card_user.resources[Resource.FLAW] = 3
 
-        combat(card_user, opponent, limit=1)
+            combat(card_user, opponent, limit=1)
 
-        assert card_user.resources[Resource.WEAKENED] == 0
-        assert card_user.resources[Resource.FLAW] == 0
+            assert card_user.resources[Resource.WEAKENED] == 0
+            assert card_user.resources[Resource.FLAW] == 0
 
     def test_remove_same_buff_twice(self):
-        card_user, opponent = self.generate_test_data()
+        for _ in range(30):
+            card_user, opponent = self.generate_test_data()
 
-        card_user[random.choice(Resource.debuffs())] = 6
+            card_user[random.choice(Resource.debuffs())] = 6
 
-        combat(card_user, opponent, limit=1)
-        assert all(card_user.resources[debuff] == 0 for debuff in Resource.debuffs())
+            combat(card_user, opponent, limit=1)
+            assert all(card_user.resources[debuff] == 0 for debuff in Resource.debuffs())
