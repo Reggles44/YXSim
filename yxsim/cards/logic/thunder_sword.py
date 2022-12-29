@@ -18,7 +18,12 @@ class CardType(Card):
             source=attacker,
             target=defender,
             damage=5,
-            injured_action=Action(card=self, source=attacker, target=defender, damage=6)
+            injured_action=Action(
+                card=self,
+                source=attacker,
+                target=defender,
+                damage=6
+            )
         ).execute()
 
     def test_card(self):

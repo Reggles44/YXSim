@@ -31,7 +31,12 @@ class CardType(Card):
     sect = Sect.CLOUD
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
-        return Action(card=self, source=attacker, target=defender, damage=3).execute()
+        return Action(
+            card=self, 
+            source=attacker, 
+            target=defender,
+            damage=3
+        ).execute()
 ```
 
 ### Resource Changes
@@ -89,7 +94,12 @@ class CardType(Card):
             source=attacker,
             target=defender,
             damage=5,
-            injured_action=Action(card=self, source=attacker, target=defender, damage=6)
+            injured_action=Action(
+                card=self,
+                source=attacker, 
+                target=defender,
+                damage=6
+            )
         ).execute()
 ```
 
@@ -163,7 +173,9 @@ class CardType(Card):
                 card=self, 
                 source=attacker, 
                 target=attacker, 
-                resource_changes=ReferenceValue(lambda parent: {Resource.DEF: parent.damage_to_health})
+                resource_changes=ReferenceValue(
+                    lambda parent: {Resource.DEF: parent.damage_to_health}
+                )
             )
         ).execute()
 ```
@@ -198,6 +210,6 @@ class CardType(Card):
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         self.exhausted = True
-        attacker.add_listener(CloudCittaDharmaOnPlayCard(self, priority=0))
-        return True
+        attacker.add_listener(CloudCittaDharmaOnPlayCard(source=attacker, source_card=self, priority=0))
+        return Action(card=self, source=attacker, target=attacker).execute()
 ```

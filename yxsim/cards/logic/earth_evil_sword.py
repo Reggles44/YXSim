@@ -22,7 +22,9 @@ class CardType(Card):
                 card=self,
                 source=attacker,
                 target=attacker,
-                resource_changes=ReferenceValue(lambda parent: {Resource.DEF: parent.damage_to_health})
+                resource_changes=ReferenceValue(
+                    lambda parent: {Resource.DEF: parent.damage_to_health}
+                )
             )
         ).execute()
 
