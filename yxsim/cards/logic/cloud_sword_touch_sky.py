@@ -23,4 +23,4 @@ class CardType(Card):
         card_user, opponent = self.generate_test_data()
         combat(card_user, opponent, limit=1)
         assert opponent.max_health == opponent.health + 6
-        assert card_user.resources.get(Resource.CLOUD_HIT) == 1
+        assert card_user.resources.get(Resource.CLOUD_HIT_COUNTER) == 1

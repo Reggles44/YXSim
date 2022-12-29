@@ -19,6 +19,7 @@ class Action:
     parent: 'Action' = None
 
     # Input Values
+    chase: bool = field(default=False, init=True)
     damage: int = field(default=None, metadata={'input': True})
     ignore_armor: bool = field(default=False, metadata={'input': True})  # For things like Ice Fulu
     healing: int = field(default=None, metadata={'input': True})
@@ -63,14 +64,14 @@ class Action:
                 pass
 
         # If we do not have the qi to play this card, do not play it
-        if not parent:
+        if not parent and not self.card.free:
             qi = getattr(self.card, 'qi')
             if qi is not None and qi:
                 player_qi = self.source.resources[Resource.QI]
                 if qi > player_qi:
                     logger.info(f'Could not afford {self.card}; gaining 1 qi instead')
                     self.source.resources[Resource.QI] += 1
-                    return False
+                    return self
                 else:
                     logger.debug(f'Spending {qi} qi from a reserve of {self.source.resources[Resource.QI]}')
                     self.source.resources[Resource.QI] -= qi
@@ -88,7 +89,7 @@ class Action:
         if self.resource_exhaust:
             for k, v in self.resource_exhaust.items():
                 logger.debug(f'Resource {k} starting at {self.source.resources[k]} decreasing by {v}')
-                self.source.resources[k] -= v
+                self.source.resources[k] = max(self.source.resources[k]-v, 0)
 
         # Changing is different than exhausting because we have to track total gained and total spent
         # Track gained and spent as different values, instead of summing into one int
@@ -100,6 +101,7 @@ class Action:
                 else:
                     logger.debug(f'Resource {k} starting at {self.source.resources[k]} increasing by {v}')
                     self.target.resources[k] += v
+                    self.target.resources[k] = max(self.target.resources[k], 0)
 
         if self.damage is not None:
             self.effective_damage = 0
@@ -152,7 +154,7 @@ class Action:
             self.effective_healing = effective_healing
 
         if self.cloud_hit_action:
-            if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT):
+            if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
                 self.cloud_hit_action.execute(parent=self)
             else:
                 pass
@@ -172,22 +174,22 @@ class Action:
                 # Apply sword intent buffer
                 for _t, v in self.sword_intent_buffer:
                     logger.debug(f'Increasing sword intent by {v} for {_t}')
-                    _t.resources[Resource.SWORD_INTENT] += v
+                    _t.resources[Resource.SWORD_INTENT] = max(0, _t.resources[Resource.SWORD_INTENT]+v)
                 self.sword_intent_buffer = list()
 
                 # Calculate Cloud Sword
                 cloud_sword = getattr(self.card, 'cloud_sword')
                 if cloud_sword is not None and cloud_sword:
-                    self.source.resources[Resource.CLOUD_HIT] += 1
+                    self.source.resources[Resource.CLOUD_HIT_COUNTER] += 1
                 else:
-                    self.source.resources[Resource.CLOUD_HIT] = 0
+                    self.source.resources[Resource.CLOUD_HIT_COUNTER] = 0
 
                 # Calculate Unrestrained Sword
                 unrestrained_sword = getattr(self.card, 'unrestrained_sword')
                 if unrestrained_sword is not None and unrestrained_sword:
                     self.source.resources[Resource.UNRESTRAINED_SWORD_COUNTER] += 1
 
-        return self.executed and self.success
+        return self
 
 
     def any_damage(self):
@@ -197,3 +199,14 @@ class Action:
             self.injured_action and self.injured_action.any_damage(),
             self.related_actions and any([ra.any_damage() for ra in self.related_actions])
         ])
+
+    def any_chase(self):
+        return any([
+            self.chase,
+            self.cloud_hit_action and self.cloud_hit_action.any_chase(),
+            self.injured_action and self.injured_action.any_chase(),
+            self.related_actions and any([ra.any_chase() for ra in self.related_actions])
+        ])
+
+
+
