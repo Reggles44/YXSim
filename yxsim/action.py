@@ -8,7 +8,7 @@ from yxsim.resources import Resource
 logger = logging.getLogger()
 
 
-@dataclass
+@dataclass(repr=False)
 class Action:
     # Meta Data
     card: 'CardType'
@@ -39,6 +39,9 @@ class Action:
     # Measured Results
     damage_to_health: int = field(default=0, init=False)
     effective_healing: int = field(default=0, init=False)
+
+    def __repr__(self):
+        return str({field.name: getattr(self, field.name) for field in fields(self) if field.metadata.get('input')})
 
     def execute(self, parent=None) -> 'bool':
         if self.sword_intent_buffer is None:
@@ -80,6 +83,7 @@ class Action:
             try:
                 setattr(self, field.name, attr.cast(**self.__dict__))
             except AttributeError as e:
+
                 pass
 
         # TODO do these trigger first or last?
