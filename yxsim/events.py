@@ -9,6 +9,7 @@ class Event:
     def __init__(self, source_card, priority=0):
         self.source_card = source_card
         self.priority = priority
+        self.enabled = True
 
     def handle(self, **kwargs):
         raise NotImplementedError
@@ -25,7 +26,8 @@ class EventManager(dict):
         events = sorted(self.get(event, []), key=lambda event: event.priority)
         logger.debug(f'{getattr(self, "id", "EventManager")} has handlers {events}')
         for evt in events:
-            evt.handle(**kwargs)
+            if evt.enabled:
+                evt.handle(**kwargs)
 
 
 class OnSetup(Event):
@@ -54,3 +56,7 @@ class OnResourceGain(Event):
 
 class OnResourceLoss(Event):
     '''Triggers when a resource is removed from the player'''
+
+
+class OnTurnStart(Event):
+    '''Triggers on start of turn'''

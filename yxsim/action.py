@@ -19,7 +19,8 @@ class Action:
     parent: 'Action' = None
 
     # Input Values
-    chase: bool = field(default=False, init=True)
+    event: bool = False
+    chase: bool = field(default=False, init=True, metadata={'input': True})
     damage: int = field(default=None, metadata={'input': True})
     ignore_armor: bool = field(default=False, metadata={'input': True})  # For things like Ice Fulu
     healing: int = field(default=None, metadata={'input': True})
@@ -64,7 +65,7 @@ class Action:
                 pass
 
         # If we do not have the qi to play this card, do not play it
-        if not parent and not self.card.free:
+        if not parent and not self.card.free and not self.event:
             qi = getattr(self.card, 'qi')
             if qi is not None and qi:
                 player_qi = self.source.resources[Resource.QI]

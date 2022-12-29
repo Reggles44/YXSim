@@ -64,15 +64,18 @@ class Player(EventManager):
         next_card = self.cards[self.card_counter]
         logger.debug(f'{self.id} playing {next_card}')
 
+        self.fire('OnTurnStart', **kwargs)
+
         actions = []
         action = next_card._play(**kwargs)
         actions.append(action)
+        self.fire('OnPlayCard', card=next_card, **kwargs)
         if self.resources[Resource.PLAY_TWICE] > 0:
             action = next_card._play(free=True, **kwargs)
             actions.append(action)
             self.resources[Resource.PLAY_TWICE] -= 1
+            self.fire('OnPlayCard', card=next_card, **kwargs)
 
-        self.fire('OnPlayCard', card=next_card, **kwargs)
 
         if any([a.success for a in actions]):
             # For Hunting Hunting Hunter

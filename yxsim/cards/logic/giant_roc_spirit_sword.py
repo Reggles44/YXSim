@@ -19,7 +19,7 @@ class CardType(Card):
             target=defender,
             related_actions=[
                 Action(card=self, source=attacker, target=defender, damage=9),
-                Action(card=self, source=attacker, target=defender, chase=ReferenceValue(lambda attacker: attacker.resources.get(Resource.QI) > 0))
+                Action(card=self, source=attacker, target=defender, chase=ReferenceValue(lambda source: source.resources.get(Resource.QI) > 0))
             ]
         ).execute()
 
@@ -36,3 +36,10 @@ class CardType(Card):
         combat(card_user, opponent, limit=1)
         assert card_user.resources[Resource.QI] == 46
         assert opponent.health == opponent.max_health - 18
+
+    def test_card_poor(self):
+        card_user, opponent = self.generate_test_data()
+        card_user.resources[Resource.QI] = 2
+        combat(card_user, opponent, limit=1)
+        assert card_user.resources[Resource.QI] == 0
+        assert opponent.health == opponent.max_health - 9
