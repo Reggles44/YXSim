@@ -6,7 +6,7 @@ from yxsim.resources import Sect, Job, Resource
 
 
 class CardType(Card):
-    display_name = 'Earth Tune'
+    display_name = 'Chord In Time'
     phase = 1
 
     job = Job.MUSICIAN

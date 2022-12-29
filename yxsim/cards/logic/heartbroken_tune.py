@@ -17,7 +17,7 @@ class HeartBrokenTuneOnTurnStart(OnTurnStart):
 
 
 class CardType(Card):
-    display_name = 'Carefree Tune'
+    display_name = 'Heartbroken Tune'
     phase = 1
 
     job = Job.MUSICIAN

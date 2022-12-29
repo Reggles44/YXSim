@@ -6,7 +6,7 @@ from yxsim.resources import Sect, Job, Resource
 
 
 class CardType(Card):
-    display_name = 'Fundamental Elixir'
+    display_name = 'Small Recovery Elixir'
     phase = 1
 
     job = Job.ELIXIRIST

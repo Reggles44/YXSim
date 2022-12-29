@@ -48,9 +48,7 @@ class Card:
         raise NotImplementedError
 
     def _test(self):
-        for name, func in inspect.getmembers(self, predicate=inspect.ismethod):
-            if name.startswith('test_'):
-                yield name, func
+        return {name: func for name, func in inspect.getmembers(self, predicate=inspect.ismethod) if name.startswith('test_')}
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()

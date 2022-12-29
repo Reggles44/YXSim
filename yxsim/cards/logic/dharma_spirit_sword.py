@@ -6,7 +6,7 @@ from yxsim.util import ReferenceValue
 from yxsim.combat import combat
 
 class CardType(Card):
-    display_name = 'Cloud Sword Hexagram'
+    display_name = 'Dharma Spirit Sword'
     phase = 3
     sect = Sect.CLOUD
     cloud_sword = True

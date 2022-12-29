@@ -19,7 +19,7 @@ class CareFreeTuneOnTurnStart(OnTurnStart):
 
 
 class CardType(Card):
-    display_name = 'Carefree Tune'
+    display_name = 'Illusion Tune'
     phase = 1
 
     job = Job.MUSICIAN

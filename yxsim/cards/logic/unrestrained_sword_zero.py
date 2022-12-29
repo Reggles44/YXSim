@@ -20,7 +20,7 @@ class CardType(Card):
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         self.exhausted = True
-        attacker.add_listener(UnrestrainedSwordZeroOnInjure(self, priority=0))
+        attacker.add_listener(UnrestrainedSwordZeroOnInjure(source=attacker, source_card=self, priority=0))
         return Action(card=self, source=attacker, target=attacker).execute()
 
     def test_card(self):
