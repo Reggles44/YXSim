@@ -6,6 +6,7 @@ from yxsim.characters.logic import registry as character_registry
 from yxsim.destinies.logic import registry as destiny_registry
 from yxsim.events import EventManager
 from yxsim.resources import Resource, Direction
+from yxsim.action import Action
 
 logger = logging.getLogger()
 
@@ -57,17 +58,22 @@ class Player(EventManager):
     def __repr__(self):
         return f'''Player ({', '.join([f'{name}={getattr(self, name).__repr__()}' for name in vars(self)])})'''
 
+    def add_star_slots(self, slots):
+        new_slots = set(slots) - set(self.star_slots)
+        self.star_slots = list(set(slots) | set(self.star_slots))
+        Action(card=None, event=True, source=self, target=self, resource_changes={Resource.QI: len(slots)-len(new_slots)}).execute()
+
     def play_next_card(self, **kwargs):
         chase = kwargs.get('chase', False)
         logger.debug(f'Next play slot is {self.card_counter}')
-
-        if self.card_counter in self.star_slots:
-            kwargs['star_slot'] = True
 
         next_card = self.cards[self.card_counter]
         logger.debug(f'{self.id} playing {next_card}')
 
         self.fire('OnTurnStart', **kwargs)
+        if not chase:
+            if self.resources[Resource.INTERNAL_INJURY]:
+                Action(card=None, event=True, source=self, target=self, damage=self.resources[Resource.INTERNAL_INJURY] or None, ignore_armor=True).execute()
 
         actions = []
         action = next_card._play(**kwargs)
@@ -102,3 +108,19 @@ class Player(EventManager):
 
         if not chase:
             self.fire('OnTurnEnd', **kwargs)
+
+    def next_slot(self, n):
+        slots = []
+        if self.direction == Direction.Right:
+            incr = 1
+        else:
+            incr = -1
+
+        cc = self.card_counter
+        for e in range(n):
+            cc += incr
+            cc %= 7
+            slots.append(cc)
+
+        return slots
+

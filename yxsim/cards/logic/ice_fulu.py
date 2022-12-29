@@ -18,11 +18,12 @@ class CardType(Card):
             source=attacker,
             target=defender,
             related_actions=[
-                Action(card=self, source=attacker, target=defender, max_hp_change=-4) for _ in range(2)
+                Action(card=self, source=attacker, target=defender, damage=4, ignore_armor=True) for _ in range(2)
             ]
         ).execute()
 
     def test_card(self):
-        card_user, opponent = self.generate_test_data(enemy_kwargs={'max_health': 9})
+        card_user, opponent = self.generate_test_data()
+        opponent.resources[Resource.DEF] = 1000
         combat(card_user, opponent, limit=1)
-        assert opponent.max_health == 1
+        assert opponent.health == opponent.max_health - 8
