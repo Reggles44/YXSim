@@ -47,8 +47,10 @@ class Card:
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         raise NotImplementedError
 
-    def test(self):
-        [func() for name, func in inspect.getmembers(self, predicate=inspect.ismethod) if name.startswith('test_')]
+    def _test(self):
+        for name, func in inspect.getmembers(self, predicate=inspect.ismethod):
+            if name.startswith('test_'):
+                yield name, func
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()

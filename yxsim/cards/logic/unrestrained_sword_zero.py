@@ -29,7 +29,3 @@ class CardType(Card):
 
         # TODO Make a real test here
         assert card_user.health == card_user.max_health - 7
-        assert 
-
-
-

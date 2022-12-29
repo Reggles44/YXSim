@@ -1,19 +1,13 @@
-import os
+import sys
 
-import pytest
+MODULE = sys.modules[__name__]
+
 
 from yxsim.cards.logic import registry as card_registry
-
-card_logic_path = os.path.join(os.getcwd(), 'yxsim', 'cards', 'logic')
-
-
-@pytest.mark.parametrize('name, card', card_registry.items())
-def test_card(name, card):
-    card = card_registry[name]
-    card.test()
+for card_name, card in card_registry.items():
+    for test_name, func in card()._test():
+        setattr(MODULE, f'test_{card_name}_{test_name}', lambda: func())
 
 
-
-
-# TODO
-# test holding sword intent
+def test_if_tests_exist():
+    assert any(var.startswith('test_') for var in dir(MODULE))

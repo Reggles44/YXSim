@@ -163,7 +163,7 @@ class Action:
                 pass
 
         if health_damage:
-            self.source.fire('OnInjure', action=self, card=self.card, attacker=self.attacker, target=self.target)
+            self.source.fire('OnInjure', action=self, card=self.card, attacker=self.source, target=self.target)
             if self.injured_action:
                 self.injured_action.execute(parent=self)
 

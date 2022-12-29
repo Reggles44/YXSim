@@ -9,3 +9,6 @@ card_registry.autoregister()
 character_registry.autoregister()
 destiny_registry.autoregister()
 stat_registry.autoregister()
+
+
+
