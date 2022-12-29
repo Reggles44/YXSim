@@ -16,7 +16,7 @@ class CardType(Card):
         return Action(
             card=self,
             source=attacker,
-            target=defender,
+            target=attacker,
             resource_changes={
                 debuff: -2 for debuff in Resource.debuffs()
             }
@@ -26,9 +26,9 @@ class CardType(Card):
         card_user, opponent = self.generate_test_data()
 
         for debuff in Resource.debuffs():
-            card_user[debuff] = 2
+            card_user.resources[debuff] += 2
 
         combat(card_user, opponent, limit=1)
 
         for debuff in Resource.debuffs():
-            assert card_user[debuff] == 0
+            assert card_user.resources[debuff] == 0

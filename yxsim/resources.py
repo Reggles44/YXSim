@@ -18,8 +18,9 @@ class Resource(Enum):
     FLAW = 102
     WEAKENED = 103
 
-    def debuffs(self) -> list:
-        return [res for res in self if res.value > 100]
+    @classmethod
+    def debuffs(cls) -> list:
+        return [res for res in cls if res.value > 100]
 
 
 class Sect(Enum):

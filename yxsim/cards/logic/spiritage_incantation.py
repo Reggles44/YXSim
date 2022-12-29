@@ -17,18 +17,16 @@ class CardType(Card):
             card=self,
             source=attacker,
             target=attacker,
-            resource_changes={Resource.QI: 3},
-            related_actions=[
-                Action(
-                    card=self,
-                    source=attacker,
-                    target=attacker,
-                    resource_changes=ReferenceValue(lambda player: {Resource.DEF: player.resources[Resource.QI]})
-                )
-            ]
+            # TODO this is wrong if there is something that changes the amount of QI gained
+            resource_changes=ReferenceValue(
+                lambda source: {Resource.DEF: source.resources[Resource.QI]+3, Resource.QI: 3}
+            )
         ).execute()
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()
+        card_user.resources[Resource.QI] = 4
         combat(card_user, opponent, limit=1)
-        assert opponent.resources[Resource.INTERNAL_INJURY] == 2
+        assert card_user.resources[Resource.QI] == 7
+        assert card_user.resources[Resource.DEF] == 7
+

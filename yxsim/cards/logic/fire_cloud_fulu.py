@@ -23,6 +23,6 @@ class CardType(Card):
         ).execute()
 
     def test_card(self):
-        card_user, opponent = self.generate_test_data(enemy_kwargs={'health': 11})
+        card_user, opponent = self.generate_test_data(enemy_kwargs={'max_health': 11})
         combat(card_user, opponent, limit=1)
         assert opponent.max_health == 0

@@ -17,7 +17,7 @@ class CardType(Card):
         return Action(
             card=self,
             source=attacker,
-            target=defender,
+            target=attacker,
             chase=True,
             resource_changes={Resource.QI: 2}
         ).execute()
@@ -25,5 +25,4 @@ class CardType(Card):
     def test_card(self):
         card_user, opponent = self.generate_test_data()
         combat(card_user, opponent, limit=1)
-        assert opponent.health == opponent.max_health - 6
-        assert card_user.resources[Resource.QI] == 1
+        assert card_user.resources[Resource.QI] == 2

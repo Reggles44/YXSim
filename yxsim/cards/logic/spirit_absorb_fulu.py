@@ -26,6 +26,8 @@ class CardType(Card):
         ).execute()
 
     def test_card(self):
-        card_user, opponent = self.generate_test_data(enemy_kwargs={'health': 9})
+        card_user, opponent = self.generate_test_data()
+        opponent.resources[Resource.QI] = 2
         combat(card_user, opponent, limit=1)
-        assert opponent.max_health == 1
+        assert opponent.resources[Resource.QI] == 0
+        assert card_user.resources[Resource.QI] == 2

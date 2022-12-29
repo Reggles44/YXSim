@@ -12,8 +12,8 @@ logger = logging.getLogger()
 class Action:
     # Meta Data
     card: 'CardType'
-    source: 'Player'
-    target: 'Player' = None
+    source: 'Player' = field(repr=False)
+    target: 'Player' = field(default=None, repr=False)
     executed: bool = field(default=False, init=False)
     success: bool = field(default=False, init=False)
     parent: 'Action' = None
