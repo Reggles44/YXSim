@@ -45,6 +45,10 @@ class OnChangeHealth(Event):
     '''Triggers when current health changes (goes up, goes down)'''
 
 
+class OnInjure(Event):
+    '''Triggers when an Injure is occurred'''
+
+
 class OnAttack(Event):
     '''Triggers when an attack card is played'''
 
