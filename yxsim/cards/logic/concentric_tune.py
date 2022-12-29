@@ -6,14 +6,13 @@ from yxsim.resources import Sect, Job, Resource
 
 
 class CardType(Card):
-    display_name = 'Body Building Elixir'
-    phase = 1
+    display_name = 'Concentric Tune'
+    phase = 2
 
     job = Job.ELIXIRIST
-    consumption = True
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
-        return Action(card=self, source=attacker)
+        pass
 
     def test_card(self):
-        pass
+        assert False

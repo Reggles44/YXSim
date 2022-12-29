@@ -12,7 +12,7 @@ class CardType(Card):
     job = Job.ELIXIRIST
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
-        return True
+        return Action(card=self, source=attacker)
 
     def test_card(self):
         pass

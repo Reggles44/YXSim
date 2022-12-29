@@ -83,7 +83,6 @@ class Action:
             try:
                 setattr(self, field.name, attr.cast(**self.__dict__))
             except AttributeError as e:
-
                 pass
 
         # TODO do these trigger first or last?

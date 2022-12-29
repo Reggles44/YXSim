@@ -14,6 +14,8 @@ class Resource(Enum):
     HEXAGRAM = 11
     IGNORE_DEF = 12
 
+    CHASE_BLOCKED = 90
+
     INTERNAL_INJURY = 101
     FLAW = 102
     WEAKENED = 103

@@ -6,7 +6,8 @@ logger = logging.getLogger()
 
 
 class Event:
-    def __init__(self, source_card, priority=0):
+    def __init__(self, source, source_card, priority=0):
+        self.source = source
         self.source_card = source_card
         self.priority = priority
         self.enabled = True
@@ -20,6 +21,8 @@ class EventManager(dict):
         event = inspect.getmro(listener.__class__)[1].__name__
         self.setdefault(event, []).append(listener)
         logger.debug(f'{getattr(self, "id", "EventManager")} adding listener {listener.__class__.__name__} for event {event}')
+        logger.debug(f'{getattr(self, "id", "EventManager")} now has listeners {self.get(event)}')
+
 
     def fire(self, event, **kwargs):
         logger.debug(f'{getattr(self, "id", "EventManager")} firing {event} with kwargs {kwargs}')
@@ -59,4 +62,8 @@ class OnResourceLoss(Event):
 
 
 class OnTurnStart(Event):
+    '''Triggers on start of turn'''
+
+
+class OnTurnEnd(Event):
     '''Triggers on start of turn'''

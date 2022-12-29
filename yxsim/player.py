@@ -97,5 +97,8 @@ class Player(EventManager):
                 if e == n-1:
                     raise ValueError(f'No valid cards to play')
 
-        if any([a.any_chase() for a in actions]) and not chase:
+        if any([a.any_chase() for a in actions]) and not chase and not self.resources.get(Resource.CHASE_BLOCKED):
             self.play_next_card(chase=True, **kwargs)
+
+        if not chase:
+            self.fire('OnTurnEnd', **kwargs)

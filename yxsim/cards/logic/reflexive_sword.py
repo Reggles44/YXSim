@@ -26,7 +26,11 @@ class CardType(Card):
             source=attacker,
             target=defender,
             damage=10,
-            injured_action=Action(card=self, source=attacker, target=attacker, damage=ReferenceValue(lambda source: attacker.add_listener(ReflexiveSwordOnTurnStart(self, priority=0))))
+            injured_action=Action(
+                card=self,
+                source=attacker,
+                target=attacker,
+                damage=ReferenceValue(lambda source: attacker.add_listener(ReflexiveSwordOnTurnStart(source=attacker, source_card=self, priority=0))))
         ).execute()
 
     def test_card(self):

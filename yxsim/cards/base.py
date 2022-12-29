@@ -15,6 +15,8 @@ class Card:
     cloud_sword = False
     unrestrained_sword = False
     spirit_sword = False
+    continuous = False
+    consumption = False
     qi = 0
 
     sect = None
@@ -23,6 +25,10 @@ class Card:
     # Modified programatically
     free = False
     played = False
+
+    # This is a hidden thing for normal attack
+    def __init__(self, damage=3):
+        self.damage = 3
 
     def __str__(self):
         return self.__repr__()

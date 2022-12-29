@@ -11,7 +11,7 @@ class CardType(Card):
     sect = Sect.CLOUD
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
-        return Action(card=self, source=attacker, target=defender, damage=3).execute()
+        return Action(card=self, source=attacker, target=defender, damage=self.damage).execute()
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()
