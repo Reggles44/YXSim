@@ -34,6 +34,7 @@ class Action:
     related_actions: list['Action'] = field(default=False, metadata={'input': True})
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
+    star_point_action: 'Action' = None
 
     # Utility
     sword_intent_buffer: list = None
@@ -95,6 +96,7 @@ class Action:
             except AttributeError as e:
                 pass
 
+        star = self.source.card_counter in self.source.star_slots
         # TODO do these trigger first or last?
         # parent logic with resources only works right now because it's a prior
         # Iterate over related actions
@@ -110,10 +112,9 @@ class Action:
         health_damage = None
         if self.damage is not None:
             self.effective_damage = 0
-            star = self.source.card_counter in self.source.star_slots
             star_power = 0
             if star:
-                star_power = self.source.resources[Resource.STAR_POINT]
+                star_power = self.source.resources[Resource.STAR_POWER]
 
             # Based on the source of the damage, increase damage dealt
             damage = self.damage + int(self.source.resources[Resource.INCREASE_ATTACK]) + int(self.source.resources[Resource.SWORD_INTENT]) + star_power
@@ -158,6 +159,9 @@ class Action:
                         self.damage_to_health = health_damage
                         self.effective_damage += health_damage
 
+            if not self.ignore_armor:
+                self.source.fire('OnAttack', attacker=self.source, defender=self.target)
+
         if self.cloud_hit_action:
             if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
                 self.cloud_hit_action.execute(parent=self)
@@ -177,6 +181,9 @@ class Action:
             effective_healing = min(self.healing, max_healing)
             self.target.health += effective_healing
             self.effective_healing = effective_healing
+
+        if self.star_point_action is not None and star:
+            self.star_point_action.execute(parent=self)
 
         # Changing is different than exhausting because we have to track total gained and total spent
         # Track gained and spent as different values, instead of summing into one int

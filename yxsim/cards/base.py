@@ -19,6 +19,7 @@ class Card:
     continuous = False
     consumption = False
     qi = 0
+    astral_move = False
 
     sect = None
     job = None

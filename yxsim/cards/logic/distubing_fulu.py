@@ -11,7 +11,7 @@ class CardType(Card):
     phase = 1
 
     job = Job.FULULIST
-    consumtion = True
+    consumption = True
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True

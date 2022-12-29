@@ -7,25 +7,24 @@ from yxsim.util import RandomValue
 
 
 class CardType(Card):
-    display_name = 'Thunder Fulu'
+    display_name = 'Palm Thunder'
     phase = 1
 
-    job = Job.FULULIST
-    consumption = True
+    sect = Sect.HEPTASTAR
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
-        return Action(card=self, source=attacker, target=defender, damage=RandomValue(4, 12)).execute()
+        return Action(card=self, source=attacker, target=defender, damage=RandomValue(2, 10)).execute()
 
     def test_card(self):
         card_user, opponent = self.generate_test_data(player_kwargs={'random_setting': 'mean'})
         combat(card_user, opponent, limit=1)
-        assert opponent.health == opponent.max_health-8
+        assert opponent.health == opponent.max_health-6
 
     def test_card_hexagram(self):
         card_user, opponent = self.generate_test_data(player_kwargs={'random_setting': 'mean'})
         card_user.resources[Resource.HEXAGRAM] = 1
         combat(card_user, opponent, limit=1)
-        assert opponent.health == opponent.max_health-12
+        assert opponent.health == opponent.max_health-10
         assert card_user.resources[Resource.HEXAGRAM] == 0
 

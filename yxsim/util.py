@@ -34,3 +34,28 @@ class RandomValue:
             return random.randint(self.min, self.max)
         else:
             return None
+
+
+def random_chance(n, chance, source):
+    results = 0
+
+    consumed_hexagram = min(n, source.resources[Resource.HEXAGRAM])
+    n -= consumed_hexagram
+    source.resources[Resource.HEXAGRAM] -= consumed_hexagram
+    results += consumed_hexagram
+
+    if not n:
+        return results
+
+    random_setting = source.random_setting
+    if random_setting == 'mean':
+        results += (n*chance)//1
+    elif random_setting == 'rand':
+        for _ in range(n):
+            if random.random() < chance:
+                results += 1
+
+    return int(results)
+
+
+
