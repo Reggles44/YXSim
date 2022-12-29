@@ -159,6 +159,9 @@ class Action:
                         self.damage_to_health = health_damage
                         self.effective_damage += health_damage
 
+            if not self.ignore_armor:
+                self.source.fire('OnAttack', attacker=self.source, defender=self.target)
+
         if self.cloud_hit_action:
             if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
                 self.cloud_hit_action.execute(parent=self)
