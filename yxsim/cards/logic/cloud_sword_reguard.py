@@ -31,4 +31,4 @@ class CardType(Card):
     def asserts(self, card_user, opponent):
         assert card_user.health == card_user.max_health - 3
         assert card_user.resources.get(Resource.DEF) == 10
-        assert card_user.resources.get(Resource.CLOUD_HIT) == 2
+        assert card_user.resources.get(Resource.CLOUD_HIT_COUNTER) == 2

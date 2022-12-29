@@ -12,16 +12,28 @@ class Card:
 
     # TODO Add all possible card attributes
     exhausted = False
-    continuous = False
     cloud_sword = False
     unrestrained_sword = False
+    spirit_sword = False
     qi = 0
+
+    # Modified programatically
+    free = False
+    played = False
 
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
         return self.display_name
+
+    def _play(self, attacker: Player, defender: Player, free: bool = False, **kwargs) -> bool:
+        if free:
+            self.free = True
+        result = self.play(attacker, defender, **kwargs)
+        self.played = True
+        self.free = False
+        return result
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         raise NotImplementedError

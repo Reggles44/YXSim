@@ -20,7 +20,7 @@ class CardType(Card):
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         self.exhausted = True
         attacker.add_listener(CloudCittaDharmaOnPlayCard(self, priority=0))
-        return True
+        return Action(card=self, source=attacker, target=attacker).execute()
 
     def test_card(self):
         card_user, opponent = self.generate_test_data(player_kwargs={'cards': [self.id, 'cloud_sword_fleche']})
