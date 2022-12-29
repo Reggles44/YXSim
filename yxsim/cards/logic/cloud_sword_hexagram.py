@@ -18,7 +18,7 @@ class CardType(Card):
             target=defender,
             related_actions=[
                 Action(card=self, source=attacker, target=attacker, resource_changes={Resource.QI: 2}),
-                Action(card=self, source=attacker, target=defender, damage=ReferenceValue(lambda source: source.resources.get(Resource.QI)))
+                Action(card=self, source=attacker, target=defender, damage=ReferenceValue(lambda source: source.resources[Resource.QI]))
             ]
         ).execute()
 

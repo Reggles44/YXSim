@@ -10,6 +10,7 @@ class Resource(Enum):
     CLOUD_HIT_COUNTER = 7
     GUARD_UP = 8
     PLAY_TWICE = 9
+    SPIRIT_SWORD_DISCOUNT = 10
 
 
     IGNORE_DEF = 101

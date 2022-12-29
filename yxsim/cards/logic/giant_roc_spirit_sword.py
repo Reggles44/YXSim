@@ -9,8 +9,8 @@ class CardType(Card):
     display_name = 'Giant Roc Spirit Sword'
     phase = 3
     sect = Sect.CLOUD
-    cloud_sword = True
     qi = 2
+    spirit_sword = True
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(

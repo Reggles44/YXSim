@@ -9,6 +9,7 @@ class CardType(Card):
     display_name = 'Raven Spirit Sword'
     phase = 3
     sect = Sect.CLOUD
+    spirit_sword = True
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(

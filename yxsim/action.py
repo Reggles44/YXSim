@@ -56,17 +56,13 @@ class Action:
             self.parent = parent
             logger.debug(f'Executing child action {self.card.id}: {self}')
 
-        # Convert all of our `RelativeAction` to values
-        for field in filter(lambda f: f.metadata.get('input'), fields(self)):
-            attr = getattr(self, field.name)
-            try:
-                setattr(self, field.name, attr.cast(**self.__dict__))
-            except AttributeError:
-                pass
-
         # If we do not have the qi to play this card, do not play it
         if not parent and not self.card.free and not self.event:
             qi = getattr(self.card, 'qi')
+            # Spirit swords can be discounted
+            if self.card.spirit_sword:
+                qi = max(qi - max(0, self.source.resources[Resource.SPIRIT_SWORD_DISCOUNT]), 0)
+
             if qi is not None and qi:
                 player_qi = self.source.resources[Resource.QI]
                 if qi > player_qi:
@@ -76,6 +72,14 @@ class Action:
                 else:
                     logger.debug(f'Spending {qi} qi from a reserve of {self.source.resources[Resource.QI]}')
                     self.source.resources[Resource.QI] -= qi
+
+        # Convert all of our `RelativeAction` to values
+        for field in filter(lambda f: f.metadata.get('input'), fields(self)):
+            attr = getattr(self, field.name)
+            try:
+                setattr(self, field.name, attr.cast(**self.__dict__))
+            except AttributeError:
+                pass
 
         if not parent:
             self.source.actions.append(self)
@@ -192,21 +196,20 @@ class Action:
 
         return self
 
-
     def any_damage(self):
         return any([
-            self.damage,
-            self.cloud_hit_action and self.cloud_hit_action.any_damage(),
-            self.injured_action and self.injured_action.any_damage(),
-            self.related_actions and any([ra.any_damage() for ra in self.related_actions])
+            self.success and self.damage,
+            self.cloud_hit_action and self.cloud_hit_action.success and self.cloud_hit_action.any_damage(),
+            self.injured_action and self.injured_action.success and self.injured_action.any_damage(),
+            self.related_actions and any([ra.success and ra.any_damage() for ra in self.related_actions])
         ])
 
     def any_chase(self):
         return any([
-            self.chase,
-            self.cloud_hit_action and self.cloud_hit_action.any_chase(),
-            self.injured_action and self.injured_action.any_chase(),
-            self.related_actions and any([ra.any_chase() for ra in self.related_actions])
+            self.success and self.chase,
+            self.cloud_hit_action and self.cloud_hit_action.success and self.cloud_hit_action.any_chase(),
+            self.injured_action and self.injured_action.success and self.injured_action.any_chase(),
+            self.related_actions and any([ra.success and ra.any_chase() for ra in self.related_actions])
         ])
 
 

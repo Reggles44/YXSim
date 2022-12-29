@@ -14,6 +14,7 @@ class Card:
     exhausted = False
     cloud_sword = False
     unrestrained_sword = False
+    spirit_sword = False
     qi = 0
 
     # Modified programatically

@@ -10,6 +10,7 @@ class CardType(Card):
     phase = 2
     sect = Sect.CLOUD
     qi = 2
+    spirit_sword = True
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
         return Action(
