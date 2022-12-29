@@ -15,7 +15,7 @@ class CardType(Card):
     job = Job.ELIXIRIST
     consumption = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
 
         def random_debuff(source):

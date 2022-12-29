@@ -13,7 +13,7 @@ class CardType(Card):
     job = Job.FULULIST
     consumption = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         return Action(
             card=self,

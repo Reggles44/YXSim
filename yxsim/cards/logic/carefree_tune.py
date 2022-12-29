@@ -12,7 +12,7 @@ class CardType(Card):
     job = Job.MUSICIAN
     continuous = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         for card in attacker.cards + defender.cards:
             if card.id == 'normal_attack':

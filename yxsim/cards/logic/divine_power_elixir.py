@@ -12,7 +12,7 @@ class CardType(Card):
     job = Job.ELIXIRIST
     consumption = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         return Action(card=self, source=attacker, target=attacker, resource_changes={Resource.INCREASE_ATTACK: 1}).execute()
 

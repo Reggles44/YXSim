@@ -11,7 +11,7 @@ class CardType(Card):
     sect = Sect.CLOUD
     qi = 1
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         return Action(
             card=self,
             source=attacker,

@@ -24,7 +24,7 @@ class CardType(Card):
     job = Job.MUSICIAN
     continuous = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         regen_tune_listener = RegenTuneOnTurnEnd(source=attacker, source_card=self, priority=0)
         attacker.add_listener(regen_tune_listener)

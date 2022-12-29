@@ -12,7 +12,7 @@ class CardType(Card):
     phase = 2
     sect = Sect.CLOUD
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         gain_qi = 2
         return Action(
             card=self,

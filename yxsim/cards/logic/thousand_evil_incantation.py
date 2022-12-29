@@ -13,7 +13,7 @@ class CardType(Card):
 
     job = Job.FULULIST
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         return Action(
             card=self,
             source=attacker,

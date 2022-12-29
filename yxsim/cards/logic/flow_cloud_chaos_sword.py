@@ -10,7 +10,7 @@ class CardType(Card):
     phase = 4
     sect = Sect.CLOUD
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         return Action(card=self, source=attacker, target=defender, related_actions=[
             Action(card=self, source=attacker, target=defender, damage=2) for _ in range(4)
         ]).execute()

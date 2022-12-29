@@ -22,8 +22,8 @@ def test_if_tests_exist():
     assert len(dynamic_tests) > 0, dynamic_tests
 
 
+card_names = [card.display_name for card in card_registry.values()]
 @pytest.mark.parametrize('card', card_registry.values())
 def test_duplicate_name(card):
-    card_names = [card.display_name for card in card_registry.values()]
     if card_names.count(card.display_name) > 1:
         raise ValueError(f'Invalid display_name for {card}')

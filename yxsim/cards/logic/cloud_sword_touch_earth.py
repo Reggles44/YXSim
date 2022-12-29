@@ -12,7 +12,7 @@ class CardType(Card):
     sect = Sect.CLOUD
     cloud_sword = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         cloud_hit_action = Action(card=self, source=attacker, target=attacker, resource_changes={Resource.DEF: 4})
         return Action(
             card=self,

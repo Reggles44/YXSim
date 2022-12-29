@@ -23,7 +23,7 @@ class CardType(Card):
     job = Job.MUSICIAN
     continuous = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         heartbroken_tune_listener = HeartBrokenTuneOnTurnStart(source=attacker, source_card=self, priority=0)
         attacker.add_listener(heartbroken_tune_listener)

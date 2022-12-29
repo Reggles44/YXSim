@@ -2,6 +2,7 @@ import typing
 import inspect
 from copy import deepcopy
 
+from yxsim.action import Action
 from yxsim.combat import combat
 from yxsim.player import Player
 
@@ -44,7 +45,7 @@ class Card:
         self.free = False
         return result
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         raise NotImplementedError
 
     def _test(self):

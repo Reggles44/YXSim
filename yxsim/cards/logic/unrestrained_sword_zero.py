@@ -18,7 +18,7 @@ class CardType(Card):
     unrestrained_sword = True
     sect = Sect.CLOUD
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         attacker.add_listener(UnrestrainedSwordZeroOnInjure(source=attacker, source_card=self, priority=0))
         return Action(card=self, source=attacker, target=attacker).execute()

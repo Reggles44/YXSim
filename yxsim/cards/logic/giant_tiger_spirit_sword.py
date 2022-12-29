@@ -12,7 +12,7 @@ class CardType(Card):
     qi = 1
     spirit_sword = True
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         return Action(card=self, source=attacker, target=defender, damage=10).execute()
 
     def test_card(self):

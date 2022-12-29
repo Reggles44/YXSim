@@ -44,7 +44,7 @@ class Action:
     def __repr__(self):
         return str({field.name: getattr(self, field.name) for field in fields(self) if field.metadata.get('input')})
 
-    def execute(self, parent=None) -> 'bool':
+    def execute(self, parent=None) -> 'Action':
         if self.sword_intent_buffer is None:
             self.sword_intent_buffer = list()
 

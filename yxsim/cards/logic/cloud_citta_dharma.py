@@ -17,7 +17,7 @@ class CardType(Card):
     phase = 1
     sect = Sect.CLOUD
 
-    def play(self, attacker: Player, defender: Player, **kwargs) -> bool:
+    def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         self.exhausted = True
         attacker.add_listener(CloudCittaDharmaOnPlayCard(source=attacker, source_card=self, priority=0))
         return Action(card=self, source=attacker, target=attacker).execute()
