@@ -13,7 +13,11 @@ def combat(p1, p2, limit=64):
     while min(attacker.health, defender.health) > 0 and turn < limit:
         logger.debug(f'Turn {turn}\t{attacker.id} is attacking {defender.id}')
         kwargs = dict(attacker=attacker, defender=defender)
-        attacker.resources[Resource.DEF] //= 2
+        if attacker.resources[Resource.STATIC_DEF] > 0:
+            attacker.resources[Resource.STATIC_DEF] -= 1
+        else:
+            attacker.resources[Resource.DEF] //= 2
+
         attacker.play_next_card(**kwargs)
 
         attacker, defender = defender, attacker

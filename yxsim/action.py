@@ -29,7 +29,7 @@ class Action:
     resource_exhaust: dict = field(default=None, metadata={'input': True})
 
     # Action Nesting
-    related_actions: list['Action'] = None
+    related_actions: list['Action'] = field(default=False, metadata={'input': True})
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
 
@@ -109,6 +109,7 @@ class Action:
                     self.target.resources[k] += v
                     self.target.resources[k] = max(self.target.resources[k], 0)
 
+        health_damage = None
         if self.damage is not None:
             self.effective_damage = 0
 
@@ -146,9 +147,15 @@ class Action:
                         self.damage_to_health = health_damage
                         self.effective_damage += health_damage
 
-                if health_damage:
-                    if self.injured_action:
-                        self.injured_action.execute(parent=self)
+        if self.cloud_hit_action:
+            if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
+                self.cloud_hit_action.execute(parent=self)
+            else:
+                pass
+
+        if health_damage:
+            if self.injured_action:
+                self.injured_action.execute(parent=self)
 
         if self.max_hp_change is not None:
             self.target.max_health = max(0, self.target.max_health + self.max_hp_change)  # TODO do we track this as damage or something
@@ -158,12 +165,6 @@ class Action:
             effective_healing = min(self.healing, max_healing)
             self.target.health += effective_healing
             self.effective_healing = effective_healing
-
-        if self.cloud_hit_action:
-            if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
-                self.cloud_hit_action.execute(parent=self)
-            else:
-                pass
 
         self.success = True
 

@@ -13,6 +13,7 @@ class Resource(Enum):
     SPIRIT_SWORD_DISCOUNT = 10
     HEXAGRAM = 11
     IGNORE_DEF = 12
+    STATIC_DEF = 13
 
     CHASE_BLOCKED = 90
 
