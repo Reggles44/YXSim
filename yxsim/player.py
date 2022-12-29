@@ -22,9 +22,12 @@ class Player(EventManager):
             character=None,
             destinies=None,
             star_slots=None,
+
+            random_setting='mean'
     ):
         super().__init__()
         self.id = id
+        self.random_setting = random_setting
 
         self.resources = collections.defaultdict(int)
         self.actions = []
@@ -75,7 +78,6 @@ class Player(EventManager):
             actions.append(action)
             self.resources[Resource.PLAY_TWICE] -= 1
             self.fire('OnPlayCard', card=next_card, **kwargs)
-
 
         if any([a.success for a in actions]):
             # For Hunting Hunting Hunter

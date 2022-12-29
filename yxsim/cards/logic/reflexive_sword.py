@@ -36,7 +36,7 @@ class CardType(Card):
         assert opponent.health == opponent.max_health - 13
         assert card_user.resources[Resource.DEF] == 6
 
-    def test_card(self):
+    def test_card_two_electric_boogaloo(self):
         card_user, opponent = self.generate_test_data()
         card_user.resources[Resource.QI] = 1
         combat(card_user, opponent, limit=5)

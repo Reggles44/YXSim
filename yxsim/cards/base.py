@@ -17,6 +17,9 @@ class Card:
     spirit_sword = False
     qi = 0
 
+    sect = None
+    job = None
+
     # Modified programatically
     free = False
     played = False

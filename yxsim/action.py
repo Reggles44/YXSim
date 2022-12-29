@@ -51,6 +51,7 @@ class Action:
 
         # Logging and setting Parent for any child action
         if not parent:
+            self.source.actions.append(self)
             logger.info(f'Executing action for {self.card.id}: {self}')
         else:
             self.parent = parent
@@ -73,16 +74,13 @@ class Action:
                     logger.debug(f'Spending {qi} qi from a reserve of {self.source.resources[Resource.QI]}')
                     self.source.resources[Resource.QI] -= qi
 
-        # Convert all of our `RelativeAction` to values
+        # Convert all of our `ReferenceValue` and `RandomValue` to values
         for field in filter(lambda f: f.metadata.get('input'), fields(self)):
             attr = getattr(self, field.name)
             try:
                 setattr(self, field.name, attr.cast(**self.__dict__))
-            except AttributeError:
+            except AttributeError as e:
                 pass
-
-        if not parent:
-            self.source.actions.append(self)
 
         # TODO do these trigger first or last?
         # parent logic with resources only works right now because it's a prior
@@ -211,6 +209,3 @@ class Action:
             self.injured_action and self.injured_action.success and self.injured_action.any_chase(),
             self.related_actions and any([ra.success and ra.any_chase() for ra in self.related_actions])
         ])
-
-
-

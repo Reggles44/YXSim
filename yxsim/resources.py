@@ -11,9 +11,16 @@ class Resource(Enum):
     GUARD_UP = 8
     PLAY_TWICE = 9
     SPIRIT_SWORD_DISCOUNT = 10
+    HEXAGRAM = 11
+    IGNORE_DEF = 12
 
+    INTERNAL_INJURY = 101
+    FLAW = 102
+    WEAKENED = 103
 
-    IGNORE_DEF = 101
+    def debuffs(self) -> list:
+        return [res for res in self if res.value > 100]
+
 
 class Sect(Enum):
     CLOUD = 1
