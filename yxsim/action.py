@@ -20,6 +20,7 @@ class Action:
 
     # Input Values
     event: bool = False
+    free: bool = field(default=False, init=True, metadata={'input': True})
     chase: bool = field(default=False, init=True, metadata={'input': True})
     damage: int = field(default=None, metadata={'input': True})
     ignore_armor: bool = field(default=False, metadata={'input': True})  # For things like Ice Fulu
@@ -60,12 +61,20 @@ class Action:
             self.parent = parent
             logger.debug(f'Executing child action {self.card.id}: {self}')
 
+        # Need to parse free early
+        attr = getattr(self, 'free')
+        try:
+            setattr(self, 'free', attr.cast(**self.__dict__))
+        except AttributeError as e:
+            pass
+
         # If we do not have the qi to play this card, do not play it
-        if not parent and not self.card.free and not self.event:
+        if not parent and not self.free and not self.card.free and not self.event:
             qi = getattr(self.card, 'qi')
             # Spirit swords can be discounted
             if self.card.spirit_sword:
                 qi = max(qi - max(0, self.source.resources[Resource.SPIRIT_SWORD_DISCOUNT]), 0)
+            logger.debug(f'Spending {qi} qi')
 
             if qi is not None and qi:
                 player_qi = self.source.resources[Resource.QI]
@@ -83,7 +92,6 @@ class Action:
             try:
                 setattr(self, field.name, attr.cast(**self.__dict__))
             except AttributeError as e:
-
                 pass
 
         # TODO do these trigger first or last?
@@ -155,6 +163,7 @@ class Action:
                 pass
 
         if health_damage:
+            self.source.fire('OnInjure', action=self, card=self.card, attacker=self.attacker, target=self.target)
             if self.injured_action:
                 self.injured_action.execute(parent=self)
 
