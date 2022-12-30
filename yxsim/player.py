@@ -17,6 +17,7 @@ class Player(EventManager):
             id,
             cards,
 
+            health=None,
             max_health=100,
             cultivation=0,
             slots=8,
@@ -33,7 +34,7 @@ class Player(EventManager):
         self.resources = collections.defaultdict(int)
         self.actions = []
 
-        self.health = max_health
+        self.health = health or max_health
         self.max_health = max_health
         self.cultivation = cultivation
         self.slots = slots
