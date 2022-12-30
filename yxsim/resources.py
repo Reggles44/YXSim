@@ -16,6 +16,7 @@ class Resource(Enum):
     STATIC_DEF = 13
 
     CHASE_BLOCKED = 90
+    QI_COST_REDUCTION = 91
 
     INTERNAL_INJURY = 101
     FLAW = 102
