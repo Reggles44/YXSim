@@ -1,5 +1,6 @@
 import collections
 import logging
+import typing
 
 from yxsim.cards.logic import registry as card_registry
 from yxsim.characters.logic import registry as character_registry
@@ -59,6 +60,9 @@ class Player(EventManager):
     def __repr__(self):
         return f'''Player ({', '.join([f'{name}={getattr(self, name).__repr__()}' for name in vars(self)])})'''
 
+    def filter_cards(self, callable: typing.Callable = lambda _: None, **kwargs):
+        return filter(lambda card: callable(card) or any(getattr(card, k) == v for k, v in kwargs.items()), self.cards)
+
     def add_star_slots(self, slots):
         new_slots = set(slots) - set(self.star_slots)
         self.star_slots = list(set(slots) | set(self.star_slots))
@@ -73,6 +77,8 @@ class Player(EventManager):
 
         self.fire('OnTurnStart', **kwargs)
         if not chase:
+            if self.resources[Resource.REGENERATION]:
+                Action(card=None, event=True, source=self, target=self, healing=self.resources[Resource.REGENERATION] or None).execute()
             if self.resources[Resource.INTERNAL_INJURY]:
                 Action(card=None, event=True, source=self, target=self, damage=self.resources[Resource.INTERNAL_INJURY] or None, ignore_armor=True).execute()
 

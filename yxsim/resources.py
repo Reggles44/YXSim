@@ -15,9 +15,11 @@ class Resource(Enum):
     IGNORE_DEF = 12
     STATIC_DEF = 13
     STAR_POWER = 14
+    REGENERATION = 15
 
     CHASE_BLOCKED = 90
     QI_COST_REDUCTION = 91
+    UNABLE_TO_ACT = 92
 
     INTERNAL_INJURY = 101
     FLAW = 102
