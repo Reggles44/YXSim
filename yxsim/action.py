@@ -20,6 +20,7 @@ class Action:
 
     # Input Values
     event: bool = False
+    star_points: list[int] = field(default=None, init=True)
     free: bool = field(default=False, init=True, metadata={'input': True})
     chase: bool = field(default=False, init=True, metadata={'input': True})
     damage: int = field(default=None, metadata={'input': True})
@@ -33,6 +34,7 @@ class Action:
     related_actions: list['Action'] = field(default=False, metadata={'input': True})
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
+    star_point_action: 'Action' = None
 
     # Utility
     sword_intent_buffer: list = None
@@ -56,10 +58,10 @@ class Action:
         # Logging and setting Parent for any child action
         if not parent:
             self.source.actions.append(self)
-            logger.info(f'Executing action for {self.card.id}: {self}')
+            logger.info(f'Executing action for {self.card.id if self.card is not None else "event"}: {self}')
         else:
             self.parent = parent
-            logger.debug(f'Executing child action {self.card.id}: {self}')
+            logger.debug(f'Executing child action {self.card.id if self.card is not None else "event"}: {self}')
 
         # Need to parse free early
         attr = getattr(self, 'free')
@@ -69,7 +71,7 @@ class Action:
             pass
 
         # If we do not have the qi to play this card, do not play it
-        if not parent and not self.free and not self.card.free and not self.event:
+        if self.card is not None and not parent and not self.free and not self.card.free and not self.event:
             qi = getattr(self.card, 'qi')
             # Spirit swords can be discounted
             if self.card.spirit_sword:
@@ -94,6 +96,7 @@ class Action:
             except AttributeError as e:
                 pass
 
+        star = self.source.card_counter in self.source.star_slots
         # TODO do these trigger first or last?
         # parent logic with resources only works right now because it's a prior
         # Iterate over related actions
@@ -106,24 +109,24 @@ class Action:
                 logger.debug(f'Resource {k} starting at {self.source.resources[k]} decreasing by {v}')
                 self.source.resources[k] = max(self.source.resources[k]-v, 0)
 
-        # Changing is different than exhausting because we have to track total gained and total spent
-        # Track gained and spent as different values, instead of summing into one int
-        if self.resource_changes:
-            for k, v in self.resource_changes.items():
-                if k == Resource.SWORD_INTENT:
-                    logger.debug(f'Sword Intent starting at {self.source.resources[k]} increasing by {v}')
-                    self.sword_intent_buffer.append((self.target, v))
-                else:
-                    logger.debug(f'Resource {k} starting at {self.source.resources[k]} increasing by {v}')
-                    self.target.resources[k] += v
-                    self.target.resources[k] = max(self.target.resources[k], 0)
-
         health_damage = None
         if self.damage is not None:
             self.effective_damage = 0
+            star_power = 0
+            if star:
+                star_power = self.source.resources[Resource.STAR_POWER]
 
             # Based on the source of the damage, increase damage dealt
-            damage = self.damage + int(self.source.resources[Resource.INCREASE_ATTACK]) + int(self.source.resources[Resource.SWORD_INTENT])
+            damage = self.damage + int(self.source.resources[Resource.INCREASE_ATTACK]) + int(self.source.resources[Resource.SWORD_INTENT]) + star_power
+            if not self.ignore_armor:
+                flaw = self.target.resources[Resource.FLAW] > 0
+                weakened = self.source.resources[Resource.WEAKENED] > 0
+                if flaw and not weakened:
+                    damage = damage*1.4
+                if weakened and not flaw:
+                    damage = damage*0.6
+                damage = damage//1
+
             if damage:
                 if damage != self.damage:
                     logger.debug(f'Recalculated damage is {damage}')
@@ -156,6 +159,9 @@ class Action:
                         self.damage_to_health = health_damage
                         self.effective_damage += health_damage
 
+            if not self.ignore_armor:
+                self.source.fire('OnAttack', attacker=self.source, defender=self.target)
+
         if self.cloud_hit_action:
             if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
                 self.cloud_hit_action.execute(parent=self)
@@ -176,6 +182,24 @@ class Action:
             self.target.health += effective_healing
             self.effective_healing = effective_healing
 
+        if self.star_point_action is not None and star:
+            self.star_point_action.execute(parent=self)
+
+        # Changing is different than exhausting because we have to track total gained and total spent
+        # Track gained and spent as different values, instead of summing into one int
+        if self.resource_changes:
+            for k, v in self.resource_changes.items():
+                if k == Resource.SWORD_INTENT:
+                    logger.debug(f'Sword Intent starting at {self.source.resources[k]} increasing by {v}')
+                    self.sword_intent_buffer.append((self.target, v))
+                else:
+                    logger.debug(f'Resource {k} starting at {self.source.resources[k]} increasing by {v}')
+                    self.target.resources[k] += v
+                    self.target.resources[k] = max(self.target.resources[k], 0)
+
+        if self.star_points is not None:
+            self.target.add_star_slots(self.star_points)
+
         self.success = True
 
         # Resolve end of action configuration changes
@@ -195,14 +219,14 @@ class Action:
                 self.sword_intent_buffer = list()
 
                 # Calculate Cloud Sword
-                cloud_sword = getattr(self.card, 'cloud_sword')
+                cloud_sword = getattr(self.card, 'cloud_sword', None)
                 if cloud_sword is not None and cloud_sword:
                     self.source.resources[Resource.CLOUD_HIT_COUNTER] += 1
                 else:
                     self.source.resources[Resource.CLOUD_HIT_COUNTER] = 0
 
                 # Calculate Unrestrained Sword
-                unrestrained_sword = getattr(self.card, 'unrestrained_sword')
+                unrestrained_sword = getattr(self.card, 'unrestrained_sword', None)
                 if unrestrained_sword is not None and unrestrained_sword:
                     self.source.resources[Resource.UNRESTRAINED_SWORD_COUNTER] += 1
 

@@ -32,7 +32,9 @@ class CardType(Card):
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()
-        combat(card_user, opponent, limit=3)
+        card_user.resources[Resource.DEF] = 100000
+        combat(card_user, opponent, limit=5)
         print(card_user.resources, opponent.resources)
-        assert card_user.resources[Resource.INTERNAL_INJURY] == 1
-        assert opponent.resources[Resource.INTERNAL_INJURY] == 1
+        assert card_user.resources[Resource.INTERNAL_INJURY] == 2
+        assert opponent.resources[Resource.INTERNAL_INJURY] == 2
+        assert card_user.health == card_user.max_health - 3

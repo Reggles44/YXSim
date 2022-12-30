@@ -1,16 +1,16 @@
 from yxsim.action import Action
 from yxsim.cards.base import Card
-from yxsim.combat import combat
 from yxsim.player import Player
-from yxsim.resources import Sect, Job, Resource
-from yxsim.util import RandomValue
+from yxsim.resources import Sect, Resource
+from yxsim.combat import combat
+import typing
 
 
 class CardType(Card):
-    display_name = 'Guard Spirit Fulu'
+    display_name = 'Thunder Hexagram'
     phase = 1
-
-    job = Job.FULULIST
+    sect = Sect.HEPTASTAR
+    qi = 0
 
     def play(self, attacker: Player, defender: Player, **kwargs) -> Action:
         return Action(
@@ -18,12 +18,15 @@ class CardType(Card):
             source=attacker,
             target=defender,
             related_actions=[
-                Action(card=self, source=attacker, target=defender, damage=4, ignore_armor=True) for _ in range(2)
+                Action(card=self, source=attacker, target=defender, damage=4),
+                Action(card=self, source=attacker, target=attacker, resource_changes={Resource.HEXAGRAM: 1})
             ]
         ).execute()
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()
-        opponent.resources[Resource.DEF] = 1000
         combat(card_user, opponent, limit=1)
-        assert opponent.health == opponent.max_health - 8
+        assert opponent.health == opponent.max_health - 4
+        assert card_user.resources[Resource.HEXAGRAM] == 1
+
+
