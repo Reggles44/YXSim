@@ -25,6 +25,7 @@ class RandomValue:
     def cast(self, source: 'Player', **kwargs):
         if source.resources[Resource.HEXAGRAM] > 0:
             source.resources[Resource.HEXAGRAM] -= 1
+            source.resources[Resource.SPENT_HEXAGRAM] += 1
             return self.max
 
         random_setting = source.random_setting
@@ -42,6 +43,7 @@ def random_chance(n, chance, source):
     consumed_hexagram = min(n, source.resources[Resource.HEXAGRAM])
     n -= consumed_hexagram
     source.resources[Resource.HEXAGRAM] -= consumed_hexagram
+    source.resources[Resource.SPENT_HEXAGRAM] += consumed_hexagram
     results += consumed_hexagram
 
     if not n:
@@ -58,4 +60,10 @@ def random_chance(n, chance, source):
     return int(results)
 
 
+def debuffs(source):
+    available_debuffs = list(filter(lambda d: source.resources[d] > 0, set(source.resources.keys()) & set(Resource.debuffs())))
+    return available_debuffs
 
+
+def has_debuffs(source):
+    return bool(debuffs(source))

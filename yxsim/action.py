@@ -183,6 +183,7 @@ class Action:
             effective_healing = min(self.healing, max_healing)
             self.target.health += effective_healing
             self.effective_healing = effective_healing
+            self.target.resources[Resource.TOTAL_HEALING] += effective_healing
 
         if self.star_point_action is not None and star:
             self.star_point_action.execute(parent=self)
@@ -244,6 +245,8 @@ class Action:
             self.success and self.damage,
             self.cloud_hit_action and self.cloud_hit_action.success and self.cloud_hit_action.any_damage(),
             self.injured_action and self.injured_action.success and self.injured_action.any_damage(),
+            self.post_action and self.post_action.success and self.post_action.any_damage(),
+            self.star_point_action and self.star_point_action.success and self.star_point_action.any_damage(),
             self.related_actions and any([ra.success and ra.any_damage() for ra in self.related_actions])
         ])
 
@@ -252,5 +255,7 @@ class Action:
             self.success and self.chase,
             self.cloud_hit_action and self.cloud_hit_action.success and self.cloud_hit_action.any_chase(),
             self.injured_action and self.injured_action.success and self.injured_action.any_chase(),
+            self.post_action and self.post_action.success and self.post_action.any_chase(),
+            self.star_point_action and self.star_point_action.success and self.star_point_action.any_chase(),
             self.related_actions and any([ra.success and ra.any_chase() for ra in self.related_actions])
         ])
