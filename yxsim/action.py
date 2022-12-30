@@ -35,6 +35,7 @@ class Action:
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
     star_point_action: 'Action' = None
+    post_action: 'Action' = None
 
     # Utility
     sword_intent_buffer: list = None
@@ -175,6 +176,7 @@ class Action:
 
         if self.max_hp_change is not None:
             self.target.max_health = max(0, self.target.max_health + self.max_hp_change)  # TODO do we track this as damage or something
+            self.target.health = min(self.target.health, self.target.max_health)  # this is definitely not injury
 
         if self.healing and self.healing > 0:
             max_healing = self.target.max_health - self.target.health
@@ -196,6 +198,11 @@ class Action:
                     logger.debug(f'Resource {k} starting at {self.source.resources[k]} increasing by {v}')
                     self.target.resources[k] += v
                     self.target.resources[k] = max(self.target.resources[k], 0)
+                    if v > 0:
+                        self.source.fire('OnResourceGain', target=self.target, resource=k, change=v)
+
+        if self.post_action is not None and self.card.played:
+            self.post_action.execute(parent=self)
 
         if self.star_points is not None:
             self.target.add_star_slots(self.star_points)
