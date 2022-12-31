@@ -9,7 +9,7 @@ import typing
 
 class CardType(Card):
     display_name = 'Cutting Weeds'
-    phase = 1
+    phase = 2
     sect = Sect.CLOUD
     qi = 1
 

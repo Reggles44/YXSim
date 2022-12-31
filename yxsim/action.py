@@ -21,6 +21,7 @@ class Action:
     # Input Values
     event: bool = False
     star_points: list[int] = field(default=None, init=True)
+    attack: bool = field(default=True, init=True)
     free: bool = field(default=False, init=True, metadata={'input': True})
     chase: bool = field(default=False, init=True, metadata={'input': True})
     damage: int = field(default=None, metadata={'input': True})
@@ -31,11 +32,11 @@ class Action:
     resource_exhaust: dict = field(default=None, metadata={'input': True})
 
     # Action Nesting
-    related_actions: list['Action'] = field(default=False, metadata={'input': True})
-    cloud_hit_action: 'Action' = None
-    injured_action: 'Action' = None
-    star_point_action: 'Action' = None
-    post_action: 'Action' = None
+    related_actions: list['Action'] = field(default=None, metadata={'input': True, 'nested': True})
+    cloud_hit_action: 'Action' = field(default=None, metadata={'nested': True})
+    injured_action: 'Action' = field(default=None, metadata={'nested': True})
+    star_point_action: 'Action' = field(default=None, metadata={'nested': True})
+    post_action: 'Action' = field(default=None, metadata={'nested': True})
 
     # Utility
     sword_intent_buffer: list = None
@@ -50,6 +51,8 @@ class Action:
     def execute(self, parent=None) -> 'Action':
         if self.sword_intent_buffer is None:
             self.sword_intent_buffer = list()
+        if self.related_actions is None:
+            self.related_actions = list()
 
         # Execution lock so we never execute the same action twice
         if self.executed:
@@ -83,7 +86,7 @@ class Action:
                 player_qi = self.source.resources[Resource.QI]
                 if qi > player_qi:
                     logger.info(f'Could not afford {self.card}; gaining 1 qi instead')
-                    self.source.resources[Resource.QI] += 1
+                    self.related_actions.append(Action(card=None, event=True, source=self.source, target=self.source, resource_changes={Resource.QI: 1}).execute())
                     return self
                 else:
                     logger.debug(f'Spending {qi} qi from a reserve of {self.source.resources[Resource.QI]}')
@@ -92,10 +95,9 @@ class Action:
         # Convert all of our `ReferenceValue` and `RandomValue` to values
         for field in filter(lambda f: f.metadata.get('input'), fields(self)):
             attr = getattr(self, field.name)
-            try:
+            has_cast = getattr(attr, 'cast', None) is not None
+            if has_cast:
                 setattr(self, field.name, attr.cast(**self.__dict__))
-            except AttributeError as e:
-                pass
 
         star = self.source.card_counter in self.source.star_slots
         # TODO do these trigger first or last?
@@ -160,8 +162,9 @@ class Action:
                         self.damage_to_health = health_damage
                         self.effective_damage += health_damage
 
-            if not self.ignore_armor:
+            if not self.ignore_armor and self.attack:
                 self.source.fire('OnAttack', attacker=self.source, defender=self.target)
+                self.target.fire('OnDefend', attacker=self.source, defender=self.target)
 
         if self.cloud_hit_action:
             if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
@@ -200,7 +203,10 @@ class Action:
                     self.target.resources[k] += v
                     self.target.resources[k] = max(self.target.resources[k], 0)
                     if v > 0:
-                        self.source.fire('OnResourceGain', target=self.target, resource=k, change=v)
+                        self.source.fire('OnResourceGain', target=self.source, resource=k, change=v)
+                    elif v < 0:
+                        self.source.fire('OnResourceLoss', target=self.source, resource=k, change=v)
+
 
         if self.post_action is not None and self.card.played:
             self.post_action.execute(parent=self)

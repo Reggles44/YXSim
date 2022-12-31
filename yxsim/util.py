@@ -26,6 +26,7 @@ class RandomValue:
         if source.resources[Resource.HEXAGRAM] > 0:
             source.resources[Resource.HEXAGRAM] -= 1
             source.resources[Resource.SPENT_HEXAGRAM] += 1
+            source.fire('OnResourceLoss', target=source, resource=Resource.HEXAGRAM, change=-1)
             return self.max
 
         random_setting = source.random_setting
@@ -44,6 +45,7 @@ def random_chance(n, chance, source):
     n -= consumed_hexagram
     source.resources[Resource.HEXAGRAM] -= consumed_hexagram
     source.resources[Resource.SPENT_HEXAGRAM] += consumed_hexagram
+    source.fire('OnResourceLoss', target=source, resource=Resource.HEXAGRAM, change=-1*consumed_hexagram)
     results += consumed_hexagram
 
     if not n:

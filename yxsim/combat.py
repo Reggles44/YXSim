@@ -6,6 +6,8 @@ logger = logging.getLogger()
 
 def combat(p1, p2, limit=64):
     attacker, defender = sorted([p1, p2], key=lambda player: player.cultivation, reverse=True)
+    attacker.opponent = defender
+    defender.opponent = attacker
     attacker.fire('OnSetup')
     defender.fire('OnSetup')
 
