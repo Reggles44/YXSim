@@ -1,16 +1,14 @@
-from importlib.resources import Resource
-
 from yxsim.action import Action
 from yxsim.cards.base import Card
 from yxsim.combat import combat
 from yxsim.events import OnTurnEnd
 from yxsim.player import Player
-from yxsim.resources import Sect, Job
+from yxsim.resources import Sect, Job, Resource
 
 
 class ScutturtleFormationOnTurnEnd(OnTurnEnd):
     def handle(self, attacker: Player, defender: Player, **kwargs):
-        Action(
+        return Action(
             card=self.source_card,
             source=self.source,
             target=self.source,

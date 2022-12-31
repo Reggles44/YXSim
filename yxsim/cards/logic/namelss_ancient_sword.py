@@ -16,12 +16,12 @@ class CardType(Card):
         return Action(
             card=self,
             source=attacker,
-            target=attacker,
+            target=defender,
             damage=11 + (11 if attacker.health < 12 else 0)
         ).execute()
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()
-        card_user.health = 12
+        card_user.health = 11
         combat(card_user, opponent, limit=1)
         assert opponent.health == opponent.max_health - 22
