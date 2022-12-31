@@ -23,5 +23,5 @@ class CardType(Card):
 
     def test_card(self):
         card_user, opponent = self.generate_test_data()
-        combat(card_user, opponent, limit=3)
+        combat(card_user, opponent, limit=1)
         assert opponent.health == opponent.max_health - 30

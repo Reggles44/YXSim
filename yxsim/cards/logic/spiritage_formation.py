@@ -11,7 +11,7 @@ class SpiritageFormationOnTurnStart(OnTurnStart):
         Action(
             card=self.source_card,
             source=self.source,
-            target=defender,
+            target=self.source,
             resource_changes={Resource.QI: 2}
         ).execute()
 

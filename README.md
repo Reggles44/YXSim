@@ -213,3 +213,12 @@ class CardType(Card):
         attacker.add_listener(CloudCittaDharmaOnPlayCard(source=attacker, source_card=self, priority=0))
         return Action(card=self, source=attacker, target=attacker).execute()
 ```
+
+TODO
+----
+
+- [ ] All Elemental Features
+- [ ] Hex Proof and other random features
+- [ ] Skip Card and Skip Turn
+- [ ] More Cards
+- [ ] Feature Testing and Card Interaction testing

@@ -30,5 +30,4 @@ class CardType(Card):
     def test_card(self):
         card_user, opponent = self.generate_test_data()
         combat(card_user, opponent, limit=3)
-        action = card_user.actions[0]
-        assert opponent.health == opponent.max_health - 7
+        assert opponent.health == opponent.max_health - 8 - 3

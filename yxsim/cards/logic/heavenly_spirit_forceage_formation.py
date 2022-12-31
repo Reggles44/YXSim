@@ -11,7 +11,7 @@ class HeavenlySpiritForceageFormationOnTurnStart(OnTurnStart):
         Action(
             card=self.source_card,
             source=self.source,
-            target=defender,
+            target=self.source,
             resource_changes={Resource.INCREASE_ATTACK: 1}
         ).execute()
 
@@ -30,4 +30,5 @@ class CardType(Card):
     def test_card(self):
         card_user, opponent = self.generate_test_data()
         combat(card_user, opponent, limit=5)
-        assert card_user.resources[Resource.INCREASE_ATTACK] == 1
+        assert card_user.resources[Resource.INCREASE_ATTACK] == 2
+        assert opponent.health == opponent.max_health - 9
