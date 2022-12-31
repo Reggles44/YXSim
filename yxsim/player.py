@@ -51,6 +51,7 @@ class Player(EventManager):
         self.star_slots = star_slots or []
         self.card_counter = 0
         self.cloud_hit_active = False  # Whether cloud hit is permanently active
+        self.opponent = None
 
         logger.debug(self)
 
@@ -58,7 +59,7 @@ class Player(EventManager):
         return self.__repr__()
 
     def __repr__(self):
-        return f'''Player ({', '.join([f'{name}={getattr(self, name).__repr__()}' for name in vars(self)])})'''
+        return f'''Player ({', '.join([f'{name}={getattr(self, name).__repr__()}' for name in vars(self) if name is not 'opponent'])})'''
 
     def filter_cards(self, callable: typing.Callable = lambda _: None, **kwargs):
         return filter(lambda card: callable(card) or any(getattr(card, k) == v for k, v in kwargs.items()), self.cards)

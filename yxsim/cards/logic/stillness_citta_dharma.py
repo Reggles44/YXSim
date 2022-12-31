@@ -8,7 +8,7 @@ from yxsim.events import OnResourceGain
 
 class StillnessCittaDharmaOnGainResource(OnResourceGain):
     def handle(self, target: Player, resource: Resource, change: int, **kwargs):
-        if resource == Resource.QI:
+        if resource == Resource.QI and change > 0:
             Action(card=self.source_card, source=target, target=target, healing=2*change).execute()
 
 
