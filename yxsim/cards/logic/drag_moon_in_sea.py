@@ -7,8 +7,8 @@ import typing
 
 
 class CardType(Card):
-    display_name = 'Imposing'
-    phase = 2
+    display_name = 'Drag Moon In Sea'
+    phase = 3
     sect = Sect.HEPTASTAR
     qi = 0
 
@@ -17,20 +17,17 @@ class CardType(Card):
             card=self,
             source=attacker,
             target=attacker,
-            resource_changes={Resource.QI: 2},
-            post_action=Action(card=self, source=attacker, target=attacker, healing=6)
+            post_action=Action(card=self, source=attacker, target=defender, chase=True, damage=12)
         ).execute()
 
     def test_card(self):
-        card_user, opponent = self.generate_test_data(player_kwargs={'health': 50, 'max_health': 100})
+        card_user, opponent = self.generate_test_data()
         combat(card_user, opponent, limit=1)
-        assert card_user.resources[Resource.QI] == 2
-        assert card_user.health == 50
+        assert opponent.health == opponent.max_health
 
     def test_card_twice(self):
-        card_user, opponent = self.generate_test_data(player_kwargs={'health': 50, 'max_health': 100})
+        card_user, opponent = self.generate_test_data()
         card_user.resources[Resource.PLAY_TWICE] = 1
         combat(card_user, opponent, limit=1)
-        assert card_user.resources[Resource.QI] == 4
-        assert card_user.health == 56
+        assert opponent.health == opponent.max_health - 15
 

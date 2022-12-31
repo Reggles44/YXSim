@@ -17,7 +17,7 @@ class CardType(Card):
             card=self,
             source=attacker,
             target=defender,
-            damage=ReferenceValue(lambda target: (target.resource[Resource.DEF]//2) + 10)
+            damage=ReferenceValue(lambda target: (target.resources[Resource.DEF]//2) + 10)
         ).execute()
 
     def test_card(self):

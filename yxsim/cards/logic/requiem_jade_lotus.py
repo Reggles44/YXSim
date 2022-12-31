@@ -16,7 +16,7 @@ class CardType(Card):
         return Action(
             card=self,
             source=attacker,
-            target=defender,
+            target=attacker,
             healing=15,
             max_hp_change=15,
             resource_changes={Resource.REGENERATION: 1}, # TODO make regen work
@@ -27,5 +27,13 @@ class CardType(Card):
         card_user.health = 1
         combat(card_user, opponent, limit=1)
         assert card_user.health == 16
+        assert card_user.max_health == 17
+        assert card_user.resources[Resource.REGENERATION] == 1
+
+    def test_card_regen(self):
+        card_user, opponent = self.generate_test_data(player_kwargs={'max_health': 2})
+        card_user.health = 1
+        combat(card_user, opponent, limit=3)
+        assert card_user.health == 14
         assert card_user.max_health == 17
         assert opponent.resources[Resource.REGENERATION] == 1

@@ -19,7 +19,9 @@ class Resource(Enum):
 
     CHASE_BLOCKED = 90
     QI_COST_REDUCTION = 91
-    UNABLE_TO_ACT = 92
+    SPENT_HEXAGRAM = 92
+    TOTAL_HEALING = 93
+    UNABLE_TO_ACT = 94
 
     INTERNAL_INJURY = 101
     FLAW = 102
