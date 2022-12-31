@@ -6,9 +6,10 @@ logger = logging.getLogger()
 
 
 class Event:
-    def __init__(self, source, source_card, priority=0):
+    def __init__(self, source, source_card, continuous=None, priority=0):
         self.source = source
         self.source_card = source_card
+        self.continuous = continuous
         self.priority = priority
         self.enabled = True
 
@@ -21,8 +22,12 @@ class EventManager(dict):
         event = inspect.getmro(listener.__class__)[1].__name__
         self.setdefault(event, []).append(listener)
         logger.debug(f'{getattr(self, "id", "EventManager")} adding listener {listener.__class__.__name__} for event {event}')
-        logger.debug(f'{getattr(self, "id", "EventManager")} now has listeners {self.get(event)}')
 
+    def remove_listener(self, listener):
+        event = inspect.getmro(listener.__class__)[1].__name__
+        if event in self and listener in self[event]:
+            self[event].remove(listener)
+            logger.debug(f'{getattr(self, "id", "EventManager")} removing listener {listener.__class__.__name__} for event {event}')
 
     def fire(self, event, **kwargs):
         logger.debug(f'{getattr(self, "id", "EventManager")} firing {event} with kwargs {kwargs}')
@@ -31,6 +36,13 @@ class EventManager(dict):
         for evt in events:
             if evt.enabled:
                 evt.handle(**kwargs)
+
+                # Limited Continuous Logic
+                if isinstance(evt.continuous, int):
+                    evt.continuous -= 1
+                    if evt.continuous <= 0:
+                        self.remove_listener(evt)
+
 
 
 class OnSetup(Event):
