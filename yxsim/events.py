@@ -30,9 +30,8 @@ class EventManager(dict):
             logger.debug(f'{getattr(self, "id", "EventManager")} removing listener {listener.__class__.__name__} for event {event}')
 
     def fire(self, event, **kwargs):
-        logger.debug(f'{getattr(self, "id", "EventManager")} firing {event} with kwargs {kwargs}')
+        logger.debug(f'''{getattr(self, "id", "EventManager")} firing {event} with kwargs {({k: getattr(v, 'id', v) for k, v in kwargs.items()})}''')
         events = sorted(self.get(event, []), key=lambda event: event.priority)
-        logger.debug(f'{getattr(self, "id", "EventManager")} has handlers {events}')
         for evt in events:
             if evt.enabled:
                 evt.handle(**kwargs)
@@ -51,6 +50,10 @@ class OnSetup(Event):
 
 class OnPlayCard(Event):
     '''Triggers when a card is played'''
+
+
+class OnPrePlayCard(Event):
+    '''Triggers when a '''
 
 
 class OnChangeHealth(Event):

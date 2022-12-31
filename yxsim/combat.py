@@ -13,7 +13,7 @@ def combat(p1, p2, limit=64):
 
     turn = 0
     while min(attacker.health, defender.health) > 0 and turn < limit:
-        logger.debug(f'Turn {turn}\t{attacker.id} is attacking {defender.id}')
+        logger.debug(f'Turn {turn}\t{attacker.id}({attacker.health}) is attacking {defender.id}({defender.health})')
         kwargs = dict(attacker=attacker, defender=defender)
         if attacker.resources[Resource.STATIC_DEF] > 0:
             attacker.resources[Resource.STATIC_DEF] -= 1

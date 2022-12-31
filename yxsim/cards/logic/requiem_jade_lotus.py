@@ -36,4 +36,4 @@ class CardType(Card):
         combat(card_user, opponent, limit=3)
         assert card_user.health == 14
         assert card_user.max_health == 17
-        assert opponent.resources[Resource.REGENERATION] == 1
+        assert card_user.resources[Resource.REGENERATION] == 1

@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Resource(Enum):
+    # Standard Resources
     QI = 1
     DEF = 2
     SWORD_INTENT = 3
@@ -17,12 +18,16 @@ class Resource(Enum):
     STAR_POWER = 14
     REGENERATION = 15
 
+    # JANK Resources
     CHASE_BLOCKED = 90
     QI_COST_REDUCTION = 91
     SPENT_HEXAGRAM = 92
     TOTAL_HEALING = 93
     UNABLE_TO_ACT = 94
+    BLACK_TURTLE = 95
+    QI_GAIN_MULTIPLIER = 96
 
+    # Debuffs
     INTERNAL_INJURY = 101
     FLAW = 102
     WEAKENED = 103
