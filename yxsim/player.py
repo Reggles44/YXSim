@@ -72,6 +72,8 @@ class Player(EventManager):
         chase = kwargs.get('chase', False)
         logger.debug(f'Next play slot is {self.card_counter}')
 
+        self.fire('OnPrePlayCard', attacker=self, card=self.cards[self.card_counter])
+
         next_card = self.cards[self.card_counter]
         logger.debug(f'{self.id} playing {next_card}')
 

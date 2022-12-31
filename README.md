@@ -222,3 +222,4 @@ TODO
 - [ ] Skip Card and Skip Turn
 - [ ] More Cards
 - [ ] Feature Testing and Card Interaction testing
+- [ ] Change any resource checking to use .get instead of __getitem__

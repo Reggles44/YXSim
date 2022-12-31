@@ -31,7 +31,7 @@ class Action:
     resource_exhaust: dict = field(default=None, metadata={'input': True})
 
     # Action Nesting
-    related_actions: list['Action'] = field(default=False, metadata={'input': True})
+    related_actions: list['Action'] = field(default=False, metadata={'input': True, 'nested': True})
     cloud_hit_action: 'Action' = None
     injured_action: 'Action' = None
     star_point_action: 'Action' = None
@@ -159,9 +159,10 @@ class Action:
                         self.target.health -= health_damage
                         self.damage_to_health = health_damage
                         self.effective_damage += health_damage
+                        self.target.fire('OnChangeHealth', source=self.source, target=self.target, health_change=-self.damage_to_health)
 
             if not self.ignore_armor:
-                self.source.fire('OnAttack', attacker=self.source, defender=self.target)
+                self.source.fire('OnAttack', attacker=self.source, defender=self.target, action=self)
 
         if self.cloud_hit_action:
             if self.source.cloud_hit_active or self.source.resources.get(Resource.CLOUD_HIT_COUNTER):
@@ -184,6 +185,7 @@ class Action:
             self.target.health += effective_healing
             self.effective_healing = effective_healing
             self.target.resources[Resource.TOTAL_HEALING] += effective_healing
+            self.target.fire('OnChangeHealth', source=self.source, target=self.target, health_change=self.effective_healing)
 
         if self.star_point_action is not None and star:
             self.star_point_action.execute(parent=self)
